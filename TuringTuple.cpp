@@ -46,3 +46,11 @@ TuringTuple::TuringTuple(TURING_POINTER to_id, TURING_POINTER from_id, TURING_BA
 	m_write		= write;
 	m_move		= move;
 }
+
+TURING_MOVE_TYPE TuringTuple::getMove() const {
+	return m_move;
+}
+
+void TuringTuple::setMove(TURING_MOVE_TYPE move) {
+	m_move = move;
+}

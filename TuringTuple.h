@@ -30,6 +30,8 @@ public:
 	void setToId(TURING_POINTER toId);
 	TURING_BAND_DATA getWrite() const;
 	void setWrite(TURING_BAND_DATA write);
+	TURING_MOVE_TYPE getMove() const;
+	void setMove(TURING_MOVE_TYPE move);
 };
 
 #endif /* TURINGTUPLE_H_ */
