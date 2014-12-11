@@ -32,7 +32,6 @@ public:
 	void clear();
 
 public:
-	const TuringBand & clone_();
 	TuringBand * clone();
 };
 

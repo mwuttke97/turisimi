@@ -44,11 +44,6 @@ TuringBand::TuringBand(TuringBandMap& band, bool emty) {
 	m_emty = emty;
 }
 
-const TuringBand & TuringBand::clone_(){
-	return TuringBand(m_band, m_emty);
-}
-
-
 TuringBand * TuringBand::clone() {
 	return new TuringBand(m_band, m_emty);
 }
