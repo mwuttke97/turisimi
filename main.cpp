@@ -22,6 +22,8 @@ static struct{
 	bool b_quiet;
 	bool b_debug;
 	const char * str_tm_in;
+	const char * str_debug_in;
+	const char * str_debug_out;
 	const char * str_band_in;
 	const char * str_band_out;
 } settings;
@@ -136,8 +138,18 @@ int main(int argc, const char *argv[]){
 			ARG_FILE_TM_IN,
 			ARG_FILE_BAND_IN,
 			ARG_FILE_BAND_OUT,
+			ARG_FILE_DEBUG_IN,
+			ARG_FILE_DEBUG_OUT,
 			ARG_DEBUG_BREAK_POINTS,
 		} current_arg = ARG_NEW_ARG;
+		
+		// standard options
+		settings.b_quiet = false;
+		settings.str_tm_in = "-";
+		settings.str_debug_in = "-";
+		settings.str_debug_out = "-";
+		settings.str_band_in = "-";
+		settings.str_band_out = "-";
 
 		for (int n = 1; n < argc; n++){
 			const char * arg = argv[n];
@@ -159,6 +171,14 @@ int main(int argc, const char *argv[]){
 				}
 				if (strcmp("-out", arg) || strcmp("--tm_out", arg)){
 					current_arg = ARG_FILE_BAND_OUT;
+					break;
+				}
+				if (strcmp("-din", arg) || strcmp("--debug_in", arg)){
+					current_arg = ARG_FILE_DEBUG_IN;
+					break;
+				}
+				if (strcmp("-dout", arg) || strcmp("--debug_out", arg)){
+					current_arg = ARG_FILE_DEBUG_OUT;
 					break;
 				}
 				if (strcmp("-sbs", arg) || strcmp("--step-by-step", arg)){
@@ -189,25 +209,36 @@ int main(int argc, const char *argv[]){
 				current_arg = ARG_NEW_ARG;
 				break;
 
+			case ARG_FILE_DEBUG_IN:
+				settings.str_debug_in = arg;
+				current_arg = ARG_NEW_ARG;
+				break;
+
+			case ARG_FILE_DEBUG_OUT:
+				settings.str_debug_out = arg;
+				current_arg = ARG_NEW_ARG;
+				break;
+
 			case ARG_DEBUG_BREAK_POINTS:
+			{
 				std::stringstream ss(arg);
 				while (ss >> buffer){
 				    debug.v_break_points.push_back(buffer);
 				    if (ss.peek() == ',')
 				        ss.ignore();
 				}
+			}
 				current_arg = ARG_NEW_ARG;
 				break;
+
+			default:
+				goto err_arg;
 			}
 			continue;
 			err_arg:
 			fprintf(stderr, "ERROR: Unknown parameter: %s", arg);
+			exit(0);
 		}
-	} else{
-		settings.b_quiet = false;
-		settings.str_tm_in = "-";
-		settings.str_band_in = "-";
-		settings.str_band_out = "-";
 	}
 	if (!settings.b_quiet)
 		info();
@@ -237,21 +268,29 @@ int main(int argc, const char *argv[]){
 	readBand();
 	std::cin.rdbuf(cinbuff);
 
-	if (strcmp("-", settings.str_band_out)){
-		// redirect std::cout to output file if `settings.str_band_out` is not equal to "-"
-		out.open(settings.str_band_out, std::ios::out);
+	if (strcmp("-", settings.str_debug_in)){
+		// redirect std::cin to input file if `settings.str_debug_in` is not equal to "-"
+		in.open(settings.str_debug_in, std::ios::in);
+		std::cin.rdbuf(cinbuff);
+	}
+
+	if (strcmp("-", settings.str_debug_out)){
+		// redirect std::cout to output file if `settings.str_debug_out` is not equal to "-"
+		out.open(settings.str_debug_out, std::ios::out);
 		std::cout.rdbuf(coutbuff);
 	}
 
-	// start simulation and write to std::cout
+	// start simulation;
+	// read from std::cin;
+	// write to std::cout
 	simulate();
+	std::cin.rdbuf(cinbuff);
 	std::cout.rdbuf(coutbuff);
 
-	// close input stream if it is open
+	// close streams
 	if (in.is_open())
 		in.close();
 
-	// close output stream if it is open
 	if (out.is_open())
 		out.close();
 
