@@ -24,7 +24,7 @@ private:
 	TupleVector m_tuples;
 	StateList m_states;
 	TuringPointerVector m_accepting_states;
-	bool m_accepted;
+	TURING_STATE m_final_state;
 	
 public:
 	TuringMashine();
@@ -32,6 +32,7 @@ public:
 public:
 	const StateList& getStates() const;
 	const TupleVector& getTuples() const;
+	TURING_STATE getFinalState() const;
 
 public:
 	void addTuple(const TuringTuple * tuple);
@@ -40,7 +41,6 @@ public:
 
 public:
 	void doStep();
-	bool isAccepted();
 	void loopyStupi();
 };
 

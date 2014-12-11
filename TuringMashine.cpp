@@ -8,16 +8,16 @@
 #include "TuringMashine.h"
 #include "TuringTypes.h"
 
-bool TuringMashine::isAccepted() {
-	return m_accepted;
-}
-
 const TuringMashine::TupleVector& TuringMashine::getTuples() const {
 	return m_tuples;
 }
 
 const TuringMashine::StateList& TuringMashine::getStates() const {
 	return m_states;
+}
+
+TURING_STATE TuringMashine::getFinalState() const {
+	return m_final_state;
 }
 
 void TuringMashine::addTuple(const TuringTuple * tuple) {
@@ -39,11 +39,12 @@ void TuringMashine::doStep() {
 }
 
 void TuringMashine::loopyStupi() {
-	while (!m_accepted)
+	while(m_final_state == TURING_STATE_NORMAL){
 		doStep();
+	}
 }
 
 TuringMashine::TuringMashine() {
 	m_states.push_back(new TuringState());
-	m_accepted = false;
+	m_final_state = TURING_STATE_NORMAL;
 }
