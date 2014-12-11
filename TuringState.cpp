@@ -35,10 +35,13 @@ void TuringState::setState(TURING_STATE state) {
 	m_state = state;
 }
 
-TURING_VERTICLE TuringState::getVerticle() const {
-	return m_verticle;
+TURING_VERTICE TuringState::getVertice() const {
+	return m_vertice;
 }
 
+void TuringState::setVertice(TURING_VERTICE node_id) {
+	m_vertice = node_id;
+}
 
 TURING_BAND_DATA TuringState::peek() {
 	return m_band.get(m_pointer);
@@ -67,23 +70,23 @@ void TuringState::write(TURING_BAND_DATA data) {
 TuringState::TuringState() {
 	this->m_state	= TURING_INIT_STATE;
 	this->m_pointer	= TURING_INIT_POINTER;
-	this->m_verticle= TURING_INIT_VERTICLE;
+	this->m_vertice= TURING_INIT_VERTICE;
 }
 
 TuringState::TuringState(const TuringState& state){
 	m_band		= state.m_band;
 	m_pointer	= state.m_pointer;
 	m_state		= state.m_state;
-	m_verticle	= state.m_verticle;
+	m_vertice	= state.m_vertice;
 }
 
-TuringState::TuringState(const TuringBand & band, const TURING_DATA &pointer, const TURING_STATE &state, const TURING_VERTICLE &verticle){
+TuringState::TuringState(const TuringBand & band, const TURING_DATA &pointer, const TURING_STATE &state, const TURING_VERTICE &vertice){
 	m_band		= band;
 	m_pointer	= pointer;
 	m_state		= state;
-	m_verticle	= verticle;
+	m_vertice	= vertice;
 }
 
 TuringState* TuringState::clone() {
-	return new TuringState(*m_band.clone(), m_pointer, m_state, m_verticle);
+	return new TuringState(*m_band.clone(), m_pointer, m_state, m_vertice);
 }

@@ -25,7 +25,9 @@ private:
 	StateList m_states;
 	TuringPointerVector m_accepting_states;
 	TURING_STATE m_final_state;
-	
+
+	void deleteStates(TURING_STATE stateToDelete);
+
 public:
 	TuringMashine();
 
@@ -33,6 +35,7 @@ public:
 	const StateList& getStates() const;
 	const TupleVector& getTuples() const;
 	TURING_STATE getFinalState() const;
+	bool reachedFinalState();
 
 public:
 	void addTuple(const TuringTuple * tuple);
@@ -42,6 +45,9 @@ public:
 public:
 	void doStep();
 	void loopyStupi();
+
+public:
+	bool verticeActive(TURING_VERTICE node_id);
 };
 
 #endif /* TURINGMASHINE_H_ */

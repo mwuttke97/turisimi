@@ -24,7 +24,8 @@ void TuringBand::clear() {
 }
 
 TURING_BAND_DATA TuringBand::get(TURING_DATA index) {
-	TURING_BAND_DATA buffer = m_band.at(index);
+	TURING_BAND_DATA buffer;
+	buffer = m_band[index];
 	if (buffer)
 		return buffer;
 	return TURING_PLACE_HOLDER;
@@ -36,7 +37,7 @@ void TuringBand::write(TURING_POINTER index, TURING_BAND_DATA value) {
 }
 
 TuringBand::TuringBand() {
-	m_emty = false;
+	m_emty = true;
 }
 
 TuringBand::TuringBand(TuringBandMap& band, bool emty) {

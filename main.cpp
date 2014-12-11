@@ -13,14 +13,16 @@
 #include <string>
 #include <vector>
 #include <string.h>
+#include <algorithm>
 #include "TuringTypes.h"
 #include "TuringTuple.h"
 #include "TuringMashine.h"
-
+#include "Help.h"
 
 static struct{
 	bool b_quiet;
 	bool b_debug;
+	bool b_continue_if_accepted;
 	const char * str_tm_in;
 	const char * str_debug_in;
 	const char * str_debug_out;
@@ -35,13 +37,32 @@ static struct{
 
 static TuringMashine mashine;
 
-void info() {
-	std::cout << "Turing mashine simulator" << std::endl;
-	std::cout << "========================" << std::endl;
+void toggleBreakPoints(std::stringstream & ss) {
+	TURING_POINTER buffer;
+	while (ss >> buffer) {
+		auto it = std::find(debug.v_break_points.begin(), debug.v_break_points.end(), buffer);
+		if (it == debug.v_break_points.end()){
+			debug.v_break_points.push_back(buffer);
+		} else{
+			debug.v_break_points.erase(it);
+		}
+		if (ss.peek() == ',')
+			ss.ignore();
+	}
+}
+
+void toggleBreakPoints(std::string arg) {
+	std::stringstream ss(arg);
+	toggleBreakPoints(ss);
+}
+
+void toggleBreakPoints(const char* arg) {
+	std::stringstream ss(arg);
+	toggleBreakPoints(ss);
 }
 
 void readTM(){
-	TURING_POINTER n_edges, n_accepting_verticles, node_id;
+	TURING_POINTER n_edges, n_accepting_vertices, node_id;
 	struct{
 		TURING_POINTER from_id;
 		TURING_BAND_DATA read;
@@ -51,12 +72,12 @@ void readTM(){
 	} tuple;
 
 	if (!settings.b_quiet)
-		std::cout << "Number of accepting nodes: ";
-	std::cin >> n_accepting_verticles;
+		std::cout << "Number of accepting nodes:\t";
+	std::cin >> n_accepting_vertices;
 
-	for (; n_accepting_verticles != 0; n_accepting_verticles--){
+	for (; n_accepting_vertices != 0; n_accepting_vertices--){
 		if (!settings.b_quiet){
-			std::cout << "[Accepting NODE ID]\t";
+			std::cout << "[Accepting NODE ID]\t\t";
 		}
 		std::cin >> node_id;
 		mashine.addAcceptingState(node_id);
@@ -67,7 +88,7 @@ void readTM(){
 	std::cin >> n_edges;
 
 	if (!settings.b_quiet){
-		std::cout << "Please enter data now" << std::endl;
+		std::cout << "Please enter data now." << std::endl;
 	}
 
 	for (; n_edges != 0; n_edges--){
@@ -88,30 +109,24 @@ void readTM(){
 }
 
 void readBand(){
-	TURING_POINTER n_first, n_last;
-	TURING_BAND_DATA band_value;
+	TURING_POINTER n_first;
+	std::string line;
 
 	if (!settings.b_quiet){
 		std::cout << "Band's first data pointer:\t";
 	}
-
 	std::cin >> n_first;
-	if (!settings.b_quiet){
-		std::cout << "Band's last data pointer:\t";
-	}
-	std::cin >> n_last;
 
 	if (!settings.b_quiet){
 		std::cout << "Please enter data now" << std::endl;
 	}
 
-	for (TURING_POINTER n = n_first; n <= n_last; n++){
-		if (!settings.b_quiet){
-			std::cout << "[BAND DATA]\t";
-		}
-		memset(&band_value, 0, sizeof(band_value));
-		std::cin >> band_value;
-		mashine.addBandData(n, band_value);
+	if (!settings.b_quiet){
+		std::cout << "[BAND DATA]\t";
+	}
+	std::cin >> line;
+	for (size_t n = 0; n < line.length(); n++){
+		mashine.addBandData(n, line[n]);
 	}
 
 	if (!settings.b_quiet){
@@ -124,12 +139,90 @@ void writeStates(){
 }
 
 void simulate(){
-	// TODO
+	if (!settings.b_quiet){
+		std::cout << "Start simulation" << std::endl;
+	}
+
+	for (;;){
+		mashine.doStep();
+		if (settings.b_debug){
+			bool b_break = false;
+			b_break |= debug.b_step_by_step;
+			b_break |= mashine.reachedFinalState() && !settings.b_continue_if_accepted;
+			if (!b_break){
+				for (auto it = debug.v_break_points.begin(); it != debug.v_break_points.end(); it++){
+					if (mashine.verticeActive(*it)){
+						b_break |= true;
+						break;
+					}
+				}
+			}
+
+			if (b_break){
+				writeStates();
+				for (;;){
+					std::string str_input;
+					if (!settings.b_quiet){
+						std::cout << ">> ";
+					}
+					std::cin >> str_input;
+					if (str_input == "s" || str_input == "step"){
+						break;
+					}
+					if (str_input == "td" || str_input == "toggle debug"){
+						settings.b_debug ^= true;
+						break;
+					}
+					if (str_input == "r" || str_input == "run" || str_input == "toggle step by step"){
+						debug.b_step_by_step ^= true;
+						break;
+					}
+					if (str_input == "R" || str_input == "Run" || str_input == "RUN" || str_input == "RUN!"){
+						settings.b_debug = false;
+						debug.b_step_by_step = false;
+						settings.b_continue_if_accepted = false;
+						debug.v_break_points.clear();
+						break;
+					}
+					if (str_input == "h" || str_input == "help"){
+						help::help_step_cmd();
+						continue;
+					}
+					std::stringstream ss(str_input);
+					std::string str_cmd, str_args;
+					std::getline(ss, str_cmd, ' ');
+					if (str_cmd == "toggle"){
+						str_cmd.clear();
+						std::getline(ss, str_cmd, ' ');
+						if (str_cmd == "bp" || str_cmd == "break_point"){
+							str_cmd.clear();
+							std::getline(ss, str_args);
+							toggleBreakPoints(str_args);
+						}
+					}
+					help::invalid_input_simulate_break();
+				}
+			}
+		}
+	}
 }
 
 int main(int argc, const char *argv[]){
+	// get executable file name for help
+	const char * prgm = (argv > 0 && argv[0]) ? argv[0] : "turisimi";
 
-	TURING_POINTER buffer;
+	// standard options
+	settings.b_quiet = false;
+	settings.b_debug = false;
+	settings.b_continue_if_accepted = false;
+	settings.str_tm_in = "-";
+	settings.str_debug_in = "-";
+	settings.str_debug_out = "-";
+	settings.str_band_in = "-";
+	settings.str_band_out = "-";
+
+	debug.b_step_by_step = false;
+	debug.v_break_points.clear();
 
 	// Handle params
 	if (argc > 1){
@@ -142,57 +235,59 @@ int main(int argc, const char *argv[]){
 			ARG_FILE_DEBUG_OUT,
 			ARG_DEBUG_BREAK_POINTS,
 		} current_arg = ARG_NEW_ARG;
-		
-		// standard options
-		settings.b_quiet = false;
-		settings.str_tm_in = "-";
-		settings.str_debug_in = "-";
-		settings.str_debug_out = "-";
-		settings.str_band_in = "-";
-		settings.str_band_out = "-";
 
 		for (int n = 1; n < argc; n++){
 			const char * arg = argv[n];
 			switch(current_arg){
 			case ARG_NEW_ARG:
 
-				if (strcmp("-q", arg) || strcmp("--quiet", arg)){
+				if (!strcmp("-q", arg) || !strcmp("--quiet", arg)){
 					settings.b_quiet = true;
 					current_arg = ARG_NEW_ARG;
 					break;
 				}
-				if (strcmp("-tm", arg) || strcmp("--tm_in", arg)){
+				if (!strcmp("-tm", arg) || !strcmp("--tm_in", arg)){
 					current_arg = ARG_FILE_TM_IN;
 					break;
 				}
-				if (strcmp("-in", arg) || strcmp("--band_in", arg)){
+				if (!strcmp("-in", arg) || !strcmp("--band_in", arg)){
 					current_arg = ARG_FILE_BAND_IN;
 					break;
 				}
-				if (strcmp("-out", arg) || strcmp("--tm_out", arg)){
+				if (!strcmp("-out", arg) || !strcmp("--tm_out", arg)){
 					current_arg = ARG_FILE_BAND_OUT;
 					break;
 				}
-				if (strcmp("-din", arg) || strcmp("--debug_in", arg)){
+				if (!strcmp("-din", arg) || !strcmp("--debug_in", arg)){
 					current_arg = ARG_FILE_DEBUG_IN;
 					break;
 				}
-				if (strcmp("-dout", arg) || strcmp("--debug_out", arg)){
+				if (!strcmp("-dout", arg) || !strcmp("--debug_out", arg)){
 					current_arg = ARG_FILE_DEBUG_OUT;
 					break;
 				}
-				if (strcmp("-sbs", arg) || strcmp("--step-by-step", arg)){
+				if (!strcmp("-sbs", arg) || !strcmp("--step_by_step", arg)){
 					settings.b_debug	= true;
 					debug.b_step_by_step= true;
 					current_arg = ARG_NEW_ARG;
 					break;
 				}
-				if (strcmp("-bp", arg) || strcmp("--brake-points", arg)){
+				if (!strcmp("-c", arg) || !strcmp("--continue", arg)){
+					settings.b_continue_if_accepted = true;
+					current_arg = ARG_NEW_ARG;
+					break;
+				}
+				if (!strcmp("-bp", arg) || !strcmp("--brake-points", arg)){
 					settings.b_debug	= true;
 					current_arg = ARG_DEBUG_BREAK_POINTS;
 					break;
 				}
-				goto err_arg;
+
+				if (!strcmp("-h", arg) || !strcmp("--help", arg)){
+					help::help_args(prgm);
+				}
+				help::invalid_args(prgm, arg);
+				exit(0);
 
 			case ARG_FILE_TM_IN:
 				settings.str_tm_in = arg;
@@ -220,28 +315,18 @@ int main(int argc, const char *argv[]){
 				break;
 
 			case ARG_DEBUG_BREAK_POINTS:
-			{
-				std::stringstream ss(arg);
-				while (ss >> buffer){
-				    debug.v_break_points.push_back(buffer);
-				    if (ss.peek() == ',')
-				        ss.ignore();
-				}
-			}
+				toggleBreakPoints(arg);
 				current_arg = ARG_NEW_ARG;
 				break;
 
 			default:
-				goto err_arg;
+				help::invalid_args(prgm, arg);
+				exit(0);
 			}
-			continue;
-			err_arg:
-			fprintf(stderr, "ERROR: Unknown parameter: %s", arg);
-			exit(0);
 		}
 	}
 	if (!settings.b_quiet)
-		info();
+		help::info();
 
 	// Handle input
 	std::ifstream in;
@@ -280,14 +365,13 @@ int main(int argc, const char *argv[]){
 		std::cout.rdbuf(coutbuff);
 	}
 
-	// start simulation;
-	// read from std::cin;
-	// write to std::cout
+	// start simulation:
+	// read from std::cin and write to std::cout
 	simulate();
 	std::cin.rdbuf(cinbuff);
 	std::cout.rdbuf(coutbuff);
 
-	// close streams
+	// close open streams
 	if (in.is_open())
 		in.close();
 
