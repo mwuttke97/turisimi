@@ -127,5 +127,5 @@ void TuringMashine::loopyStupi() {
 
 TuringMashine::TuringMashine() {
 	m_states.push_back(new TuringState());
-	m_final_state = TURING_STATE_NORMAL;
+	m_final_state = TURING_INIT_STATE;
 }

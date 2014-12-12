@@ -5,6 +5,7 @@
  *      Author: maxi
  */
 
+#include <assert.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <iostream>
@@ -14,6 +15,7 @@
 #include <vector>
 #include <string.h>
 #include <algorithm>
+#include <queue>
 #include "TuringTypes.h"
 #include "TuringTuple.h"
 #include "TuringMashine.h"
@@ -21,7 +23,9 @@
 
 static struct{
 	bool b_quiet;
+	bool b_was_quiet;
 	bool b_debug;
+	bool b_one_input_file;
 	bool b_continue_if_accepted;
 	const char * str_tm_in;
 	const char * str_debug_in;
@@ -35,7 +39,7 @@ static struct{
 	std::vector<TURING_POINTER> v_break_points;
 } debug;
 
-static TuringMashine mashine;
+TuringMashine * mashine;
 
 void toggleBreakPoints(std::stringstream & ss) {
 	TURING_POINTER buffer;
@@ -80,7 +84,7 @@ void readTM(){
 			std::cout << "[Accepting NODE ID]\t\t";
 		}
 		std::cin >> node_id;
-		mashine.addAcceptingState(node_id);
+		mashine->addAcceptingState(node_id);
 	}
 
 	if (!settings.b_quiet)
@@ -101,7 +105,7 @@ void readTM(){
 			std::cin.clear();
 			std::cin.ignore();
 		}
-		mashine.addTuple(new TuringTuple(tuple.to_id, tuple.from_id, tuple.read, tuple.write, (TURING_MOVE_TYPE) tuple.move));
+		mashine->addTuple(new TuringTuple(tuple.to_id, tuple.from_id, tuple.read, tuple.write, (TURING_MOVE_TYPE) tuple.move));
 	}
 	if (!settings.b_quiet){
 		std::cout << "OK." << std::endl;
@@ -124,34 +128,83 @@ void readBand(){
 	if (!settings.b_quiet){
 		std::cout << "[BAND DATA]\t";
 	}
-	std::cin >> line;
+
+	std::cin.ignore();
+	std::getline(std::cin, line);
 	for (size_t n = 0; n < line.length(); n++){
-		mashine.addBandData(n, line[n]);
+		mashine->addBandData(n, line[n] + n_first);
 	}
 
 	if (!settings.b_quiet){
-		std::cout << std::endl;
+		std::cout << "OK." << std::endl;
 	}
 }
 
+void writeBand(const TuringState& state) {
+	TURING_POINTER n_first, n_last, n_pointer, n_width;
+
+	auto band	= state.getBand();
+	n_pointer	= state.getPointer();
+	n_first		= std::min(band->getFirst(), n_pointer);
+	n_last		= std::max(band->getLast(), n_pointer);
+	n_width		= n_last - n_first;
+
+	std::stringstream line0, line1, line2 /*(std::string(n_width * 2 + 10, ' '))*/;
+
+	for (auto i = n_first; i <= n_last; i++){
+		line0 << band->get(i) << " ";
+	}
+
+	for (auto i = n_pointer - n_first; i != 0; i--){
+		line1 << "  ";
+	}
+	line1 << "^";
+	line2.width(n_width * 2 + 1);
+	line2 << n_last;
+	line2.seekp(0);
+	line2 << n_first;
+
+	std::cout << "## " << line0.str() << "##" << std::endl;
+	std::cout << "   " << line1.str() << std::endl;
+	std::cout << "   " << line2.str() << std::endl;
+}
+
+void writeState(const TuringState & state){
+	std::cout
+		<< "State: " << turingStateString(state.getState()) << "; "
+		<< "Vertice: " << state.getVertice() << std::endl;
+
+	writeBand(state);
+	std::cout << std::endl;
+}
+
 void writeStates(){
-	// TODO
+	auto states = mashine->getStates();
+	auto n_states = states.size();
+
+	std::cout
+		<< "Simulation state: " << turingStateString(mashine->getFinalState()) << std::endl
+		<< "Number of configurations: " << n_states << std::endl << std::endl;
+	for (auto it = states.begin(); it != states.end(); it++){
+		assert(*it);
+		writeState(**it);
+	}
+	std::cout << std::endl;
 }
 
 void simulate(){
 	if (!settings.b_quiet){
-		std::cout << "Start simulation" << std::endl;
+		std::cout << "Start simulation" << std::endl << std::endl;
 	}
 
 	for (;;){
-		mashine.doStep();
-		if (settings.b_debug){
+		bool b_interupt = mashine->reachedFinalState() && !settings.b_continue_if_accepted;
+		if (settings.b_debug || b_interupt){
 			bool b_break = false;
-			b_break |= debug.b_step_by_step;
-			b_break |= mashine.reachedFinalState() && !settings.b_continue_if_accepted;
+			b_break |= debug.b_step_by_step || b_interupt;
 			if (!b_break){
 				for (auto it = debug.v_break_points.begin(); it != debug.v_break_points.end(); it++){
-					if (mashine.verticeActive(*it)){
+					if (mashine->verticeActive(*it)){
 						b_break |= true;
 						break;
 					}
@@ -165,7 +218,7 @@ void simulate(){
 					if (!settings.b_quiet){
 						std::cout << ">> ";
 					}
-					std::cin >> str_input;
+					std::getline(std::cin, str_input);
 					if (str_input == "s" || str_input == "step"){
 						break;
 					}
@@ -183,6 +236,9 @@ void simulate(){
 						settings.b_continue_if_accepted = false;
 						debug.v_break_points.clear();
 						break;
+					}
+					if (str_input == "q" || str_input == "quit"){
+						exit(1);
 					}
 					if (str_input == "h" || str_input == "help"){
 						help::help_step_cmd();
@@ -204,6 +260,7 @@ void simulate(){
 				}
 			}
 		}
+		mashine->doStep();
 	}
 }
 
@@ -211,9 +268,14 @@ int main(int argc, const char *argv[]){
 	// get executable file name for help
 	const char * prgm = (argv > 0 && argv[0]) ? argv[0] : "turisimi";
 
+	// create TM
+	mashine = new TuringMashine();
+
 	// standard options
 	settings.b_quiet = false;
+	settings.b_was_quiet = false;
 	settings.b_debug = false;
+	settings.b_one_input_file = false;
 	settings.b_continue_if_accepted = false;
 	settings.str_tm_in = "-";
 	settings.str_debug_in = "-";
@@ -228,6 +290,7 @@ int main(int argc, const char *argv[]){
 	if (argc > 1){
 		enum{
 			ARG_NEW_ARG = 0,
+			ARG_FILE_INPUT,
 			ARG_FILE_TM_IN,
 			ARG_FILE_BAND_IN,
 			ARG_FILE_BAND_OUT,
@@ -238,11 +301,13 @@ int main(int argc, const char *argv[]){
 
 		for (int n = 1; n < argc; n++){
 			const char * arg = argv[n];
+
 			switch(current_arg){
 			case ARG_NEW_ARG:
 
 				if (!strcmp("-q", arg) || !strcmp("--quiet", arg)){
 					settings.b_quiet = true;
+					settings.b_was_quiet = true;
 					current_arg = ARG_NEW_ARG;
 					break;
 				}
@@ -250,7 +315,12 @@ int main(int argc, const char *argv[]){
 					current_arg = ARG_FILE_TM_IN;
 					break;
 				}
-				if (!strcmp("-in", arg) || !strcmp("--band_in", arg)){
+				if (!strcmp("-i", arg) || !strcmp("-in", arg) || !strcmp("--input", arg)){
+					settings.b_one_input_file = true;
+					current_arg = ARG_FILE_INPUT;
+					break;
+				}
+				if (!strcmp("-bin", arg) || !strcmp("--band_in", arg)){
 					current_arg = ARG_FILE_BAND_IN;
 					break;
 				}
@@ -288,6 +358,12 @@ int main(int argc, const char *argv[]){
 				}
 				help::invalid_args(prgm, arg);
 				exit(0);
+
+			case ARG_FILE_INPUT:
+				settings.str_tm_in = arg;
+				settings.str_band_in = arg;
+				current_arg = ARG_NEW_ARG;
+				break;
 
 			case ARG_FILE_TM_IN:
 				settings.str_tm_in = arg;
@@ -335,34 +411,42 @@ int main(int argc, const char *argv[]){
 	cinbuff = std::cin.rdbuf();
 	coutbuff= std::cout.rdbuf();
 
-	if (strcmp("-", settings.str_tm_in)){
+	if (strcmp("-", settings.str_tm_in) != 0){
 		// redirect std::cin to input file if `settings.str_tm_in` is not equal to "-"
 		in.open(settings.str_tm_in, std::ios::in);
-		std::cin.rdbuf(cinbuff);
+		std::cin.rdbuf(in.rdbuf());
+		settings.b_quiet = true;
 	}
 	// read turing mashine from std::cin
 	readTM();
-	std::cin.rdbuf(cinbuff);
-
-	if (strcmp("-", settings.str_band_in)){
-		// redirect std::cin to input file if `settings.str_band_in` is not equal to "-"
-		in.open(settings.str_band_in, std::ios::in);
+	if (settings.b_one_input_file){
+		settings.b_quiet = true;
+	} else{
 		std::cin.rdbuf(cinbuff);
+		if (strcmp("-", settings.str_band_in) != 0){
+			// redirect std::cin to input file if `settings.str_band_in` is not equal to "-"
+			in.open(settings.str_band_in, std::ios::in);
+			std::cin.rdbuf(in.rdbuf());
+		}
+		settings.b_quiet = settings.b_was_quiet;
 	}
-	// read baand data from std::cin
+
+	// read band data from std::cin
 	readBand();
 	std::cin.rdbuf(cinbuff);
+	settings.b_quiet = settings.b_was_quiet;
 
-	if (strcmp("-", settings.str_debug_in)){
+	if (strcmp("-", settings.str_debug_in) != 0){
 		// redirect std::cin to input file if `settings.str_debug_in` is not equal to "-"
 		in.open(settings.str_debug_in, std::ios::in);
-		std::cin.rdbuf(cinbuff);
+		std::cin.rdbuf(in.rdbuf());
 	}
 
-	if (strcmp("-", settings.str_debug_out)){
+	if (strcmp("-", settings.str_debug_out) != 0){
 		// redirect std::cout to output file if `settings.str_debug_out` is not equal to "-"
 		out.open(settings.str_debug_out, std::ios::out);
-		std::cout.rdbuf(coutbuff);
+		std::cout.rdbuf(out.rdbuf());
+		settings.b_quiet = true;
 	}
 
 	// start simulation:
@@ -370,6 +454,7 @@ int main(int argc, const char *argv[]){
 	simulate();
 	std::cin.rdbuf(cinbuff);
 	std::cout.rdbuf(coutbuff);
+	settings.b_quiet = settings.b_was_quiet;
 
 	// close open streams
 	if (in.is_open())

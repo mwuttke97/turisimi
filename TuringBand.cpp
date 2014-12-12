@@ -15,34 +15,69 @@ bool TuringBand::isEmty(TURING_POINTER index) {
 	return get(index) == TURING_PLACE_HOLDER;
 }
 
-void TuringBand::clear(TURING_POINTER index) {
-	m_band[index] = TURING_PLACE_HOLDER;
-}
-
 void TuringBand::clear() {
+	while (!m_band.empty()){
+		if (m_band.back())
+			delete m_band.back();
+		m_band.pop_back();
+	}
 	m_band.clear();
 }
 
-TURING_BAND_DATA TuringBand::get(TURING_DATA index) {
-	TURING_BAND_DATA buffer;
-	buffer = m_band[index];
-	if (buffer)
-		return buffer;
+TURING_BAND_DATA TuringBand::get(TURING_POINTER index) {
+	for (auto it = m_band.begin(); it != m_band.end(); it++){
+		if ((*it)->m_pointer == index){
+			return (*it)->m_data;
+		}
+	}
 	return TURING_PLACE_HOLDER;
 }
 
 void TuringBand::write(TURING_POINTER index, TURING_BAND_DATA value) {
-	m_band[index] = value;
+	TuringBandPair * pair;
+	pair = new TuringBandPair();
+	pair->m_pointer = index;
+	pair->m_data = value;
+	m_band.push_back(pair);
 	m_emty &= (value == TURING_PLACE_HOLDER);
 }
 
-TuringBand::TuringBand() {
+TuringBand::TuringBand() : m_band() {
 	m_emty = true;
 }
 
-TuringBand::TuringBand(TuringBandMap& band, bool emty) {
-	m_band = band;
+TuringBand::~TuringBand() {
+	clear();
+}
+
+TuringBand::TuringBand(TuringBandMap& band, bool emty) : m_band() {
+	TuringBandPair * pair;
+	TuringBandMap::iterator it;
+	TuringBandMap::size_type c;
+	for ( it = band.begin(),  c = 0; it != band.end(); it++, c++){
+		pair = new TuringBandPair();
+		*pair = **it;
+		m_band.push_back(pair);
+	}
 	m_emty = emty;
+}
+
+TURING_POINTER TuringBand::getFirst() const {
+	TURING_POINTER min = TURING_POINTER_MAX;
+	for (auto it = m_band.begin(); it != m_band.end(); it++){
+		if ((*it)->m_pointer < min)
+			min = (*it)->m_pointer;
+	}
+	return min;
+}
+
+TURING_POINTER TuringBand::getLast() const {
+	TURING_POINTER max = TURING_POINTER_MIN;
+	for (auto it = m_band.begin(); it != m_band.end(); it++){
+		if ((*it)->m_pointer > max)
+			max = (*it)->m_pointer;
+	}
+	return max;
 }
 
 TuringBand * TuringBand::clone() {

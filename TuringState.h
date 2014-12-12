@@ -30,7 +30,7 @@ private:
 			const TURING_VERTICE &vertice = TURING_INIT_VERTICE);
 
 public:
-	TuringBand* getBand();
+	TuringBand* getBand() const;
 	TURING_POINTER getPointer() const;
 	void setPointer(TURING_POINTER pointer);
 	void incPointer();

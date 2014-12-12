@@ -7,8 +7,8 @@
 
 #include "TuringState.h"
 
-TuringBand* TuringState::getBand() {
-	return &m_band;
+TuringBand* TuringState::getBand() const {
+	return (TuringBand*) &m_band;
 }
 
 TURING_POINTER TuringState::getPointer() const {
@@ -67,20 +67,20 @@ void TuringState::write(TURING_BAND_DATA data) {
 	m_band.write(m_pointer, data);
 }
 
-TuringState::TuringState() {
+TuringState::TuringState() : m_band() {
 	this->m_state	= TURING_INIT_STATE;
 	this->m_pointer	= TURING_INIT_POINTER;
-	this->m_vertice= TURING_INIT_VERTICE;
+	this->m_vertice = TURING_INIT_VERTICE;
 }
 
-TuringState::TuringState(const TuringState& state){
+TuringState::TuringState(const TuringState& state) : m_band() {
 	m_band		= state.m_band;
 	m_pointer	= state.m_pointer;
 	m_state		= state.m_state;
 	m_vertice	= state.m_vertice;
 }
 
-TuringState::TuringState(const TuringBand & band, const TURING_DATA &pointer, const TURING_STATE &state, const TURING_VERTICE &vertice){
+TuringState::TuringState(const TuringBand & band, const TURING_DATA &pointer, const TURING_STATE &state, const TURING_VERTICE &vertice) : m_band() {
 	m_band		= band;
 	m_pointer	= pointer;
 	m_state		= state;

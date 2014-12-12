@@ -9,7 +9,13 @@
 #define TURINGTYPES_H_
 
 // Note: VERTICES are sometimes called nodes
-typedef long long TURING_DATA, TURING_POINTER, TURING_VERTICE;
+typedef int TURING_DATA, TURING_POINTER, TURING_VERTICE;
+
+#include <limits.h>
+enum{
+	TURING_POINTER_MAX = (TURING_POINTER) +__INT_MAX__,
+	TURING_POINTER_MIN = (TURING_POINTER) -__INT_MAX__,
+};
 
 typedef char TURING_BAND_DATA;
 
