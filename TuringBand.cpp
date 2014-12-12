@@ -35,7 +35,7 @@ TURING_BAND_DATA TuringBand::get(TURING_POINTER index) {
 
 void TuringBand::write(TURING_POINTER index, TURING_BAND_DATA value) {
 	bool b_new;
-	TuringBandPair * pair;
+	TuringBandPair * pair = 0;
 	for (auto it = m_band.begin(); it != m_band.end(); it++){
 		if ((*it)->m_pointer == index){
 			pair = *it;
