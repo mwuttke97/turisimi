@@ -9,6 +9,9 @@
 
 const char* turingStateString(TURING_STATE state) {
 	switch (state){
+	case TURING_STATE_INIT:
+		return "init";
+
 	case TURING_STATE_NORMAL:
 		return "normal";
 

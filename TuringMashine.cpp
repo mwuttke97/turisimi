@@ -84,20 +84,21 @@ void TuringMashine::doStep() {
 	deleteStates(TURING_STATE_OLD);
 
 	for (stateIt = m_states.begin(); stateIt != m_states.end(); stateIt++){
-		if ((*stateIt)->getState() == TURING_STATE_NORMAL){
-			read = (*stateIt)->peek();
+		TuringState * state = *stateIt;
+		if (state->getState() == TURING_STATE_NORMAL || state->getState() == TURING_STATE_INIT){
+			read = state->peek();
 			// search for i in m_accepting_states
 
 			// search for good tuples
 			for (tupleIt = m_tuples.begin(); tupleIt != m_tuples.end(); tupleIt++){
-				if ((*tupleIt)->getFromId() == (*stateIt)->getPointer()){
+				if ((*tupleIt)->getFromId() == state->getPointer()){
 					if ((*tupleIt)->getRead() == read){
-						TuringState * clonedState = (*stateIt)->clone();
+						TuringState * clonedState = state->clone();
 						clonedState->write((*tupleIt)->getWrite());
 						clonedState->move((*tupleIt)->getMove());
 						clonedState->setVertice((*tupleIt)->getToId());
 						m_states.push_front(clonedState);
-						(*stateIt)->setState(TURING_STATE_OLD);
+						state->setState(TURING_STATE_OLD);
 					}
 				}
 			}
