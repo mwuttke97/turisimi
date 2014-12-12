@@ -60,7 +60,8 @@ bool TuringMashine::verticeActive(TURING_VERTICE node_id) {
 void TuringMashine::deleteStates(TURING_STATE stateToDelete) {
 	for (auto stateIt = m_states.begin(); stateIt != m_states.end();) {
 		if ((*stateIt)->getState() == stateToDelete) {
-			delete *stateIt;
+			if (*stateIt)
+				delete *stateIt;
 			if (stateIt == m_states.begin()) {
 				m_states.pop_front();
 				stateIt = m_states.begin();

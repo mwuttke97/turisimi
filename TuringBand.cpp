@@ -34,11 +34,23 @@ TURING_BAND_DATA TuringBand::get(TURING_POINTER index) {
 }
 
 void TuringBand::write(TURING_POINTER index, TURING_BAND_DATA value) {
+	bool b_new;
 	TuringBandPair * pair;
-	pair = new TuringBandPair();
+	for (auto it = m_band.begin(); it != m_band.end(); it++){
+		if ((*it)->m_pointer == index){
+			pair = *it;
+			b_new = false;
+			break;
+		}
+	}
+	if (pair == 0){
+		pair = new TuringBandPair();
+		b_new = true;
+	}
 	pair->m_pointer = index;
 	pair->m_data = value;
-	m_band.push_back(pair);
+	if (b_new)
+		m_band.push_back(pair);
 	m_emty &= (value == TURING_PLACE_HOLDER);
 }
 
