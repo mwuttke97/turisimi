@@ -8,8 +8,11 @@
 #ifndef TURINGSTATE_H_
 #define TURINGSTATE_H_
 
+#include <list>
 #include "TuringTypes.h"
 #include "TuringBand.h"
+
+typedef std::list<TURING_VERTICE> TuringStateHistory;
 
 class TuringState {
 
@@ -18,13 +21,15 @@ private:
 	TURING_POINTER m_pointer;
 	TURING_STATE m_state;
 	TURING_VERTICE m_vertice;
+	TuringStateHistory m_history;
 
 public:
 	TuringState();
 	TuringState(const TuringState & state);
 private:
 	TuringState(
-			const TuringBand & band,
+			const TuringBand &band,
+			const TuringStateHistory &history,
 			const TURING_POINTER &pointer	= TURING_INIT_POINTER,
 			const TURING_STATE &state		= TURING_INIT_STATE,
 			const TURING_VERTICE &vertice	= TURING_INIT_VERTICE);
@@ -37,6 +42,7 @@ public:
 	void decPointer();
 	TURING_STATE getState() const;
 	void setState(TURING_STATE state);
+	const TuringStateHistory& getHistory() const;
 
 public:
 	// Band methods

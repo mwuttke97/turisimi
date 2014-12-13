@@ -39,7 +39,12 @@ TURING_VERTICE TuringState::getVertice() const {
 	return m_vertice;
 }
 
+const TuringStateHistory& TuringState::getHistory() const {
+	return m_history;
+}
+
 void TuringState::setVertice(TURING_VERTICE node_id) {
+	m_history.push_back(node_id);
 	m_vertice = node_id;
 }
 
@@ -67,20 +72,26 @@ void TuringState::write(TURING_BAND_DATA data) {
 	m_band.write(m_pointer, data);
 }
 
-TuringState::TuringState() : m_band() {
+TuringState::TuringState() : m_band(), m_history() {
 	this->m_state	= TURING_INIT_STATE;
 	this->m_pointer	= TURING_INIT_POINTER;
 	this->m_vertice = TURING_INIT_VERTICE;
+	this->m_history.push_back(m_vertice);
 }
 
-TuringState::TuringState(const TuringState& state) : m_band() {
+TuringState::TuringState(const TuringState& state) : m_band(), m_history() {
+	m_history.insert(m_history.begin(), state.m_history.begin(), state.m_history.end());
 	m_band		= state.m_band;
 	m_pointer	= state.m_pointer;
 	m_state		= state.m_state;
 	m_vertice	= state.m_vertice;
 }
 
-TuringState::TuringState(const TuringBand & band, const TURING_POINTER &pointer, const TURING_STATE &state, const TURING_VERTICE &vertice) : m_band() {
+TuringState::TuringState(const TuringBand &band, const TuringStateHistory &history,
+		const TURING_POINTER &pointer, const TURING_STATE &state, const TURING_VERTICE &vertice) : m_band(), m_history() {
+	for (auto it = history.begin(); it != history.end(); it++){
+		m_history.push_front(*it);
+	}
 	m_band		= band;
 	m_pointer	= pointer;
 	m_state		= state;
@@ -88,5 +99,5 @@ TuringState::TuringState(const TuringBand & band, const TURING_POINTER &pointer,
 }
 
 TuringState* TuringState::clone() const{
-	return new TuringState(m_band, m_pointer, m_state, m_vertice);
+	return new TuringState(m_band, (TuringStateHistory &) m_history, m_pointer, m_state, m_vertice);
 }
