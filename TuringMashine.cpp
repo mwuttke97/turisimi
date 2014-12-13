@@ -83,28 +83,61 @@ void TuringMashine::doStep() {
 	// delete old states
 	deleteStates(TURING_STATE_OLD);
 
+	switch (m_final_state){
+	case TURING_STATE_INIT:
+		m_final_state = TURING_STATE_NORMAL;
+		break;
+
+	case TURING_STATE_NORMAL:
+		if (m_states.empty()){
+			m_final_state = TURING_STATE_REJECTED;
+		}
+		break;
+
+	case TURING_STATE_REJECTED:
+		return;
+
+	case TURING_STATE_ACCEPTED:
+	default:
+		break;
+	}
+
 	for (stateIt = m_states.begin(); stateIt != m_states.end(); stateIt++){
 		TuringState * state = *stateIt;
-		if (state->getState() == TURING_STATE_NORMAL || state->getState() == TURING_STATE_INIT){
-			read = state->peek();
-			// search for i in m_accepting_states
+		TURING_STATE cloneState;
+		switch (state->getState()){
+		case TURING_STATE_INIT:
+		case TURING_STATE_NORMAL:
+			cloneState = TURING_STATE_NORMAL;
+			break;
 
-			// search for good tuples
-			for (tupleIt = m_tuples.begin(); tupleIt != m_tuples.end(); tupleIt++){
-				if ((*tupleIt)->getFromId() == state->getPointer()){
-					if ((*tupleIt)->getRead() == read){
-						TuringState * clonedState = state->clone();
-						clonedState->write((*tupleIt)->getWrite());
-						clonedState->move((*tupleIt)->getMove());
-						clonedState->setVertice((*tupleIt)->getToId());
-						m_states.push_front(clonedState);
-						state->setState(TURING_STATE_OLD);
-					}
+		case TURING_STATE_ACCEPTED:
+			cloneState = TURING_STATE_ACCEPTED;
+			break;
+
+		case TURING_STATE_OLD:
+		case TURING_STATE_REJECTED:
+		default:
+			continue;
+		}
+		read = state->peek();
+
+		// search for good tuples
+		for (tupleIt = m_tuples.begin(); tupleIt != m_tuples.end(); tupleIt++){
+			if ((*tupleIt)->getFromId() == state->getPointer()){
+				if ((*tupleIt)->getRead() == read){
+					TuringState * clonedState = state->clone();
+					clonedState->setState(cloneState);
+					clonedState->write((*tupleIt)->getWrite());
+					clonedState->move((*tupleIt)->getMove());
+					clonedState->setVertice((*tupleIt)->getToId());
+					m_states.push_front(clonedState);
+					state->setState(TURING_STATE_OLD);
 				}
 			}
-			if ((*stateIt)->getState() != TURING_STATE_OLD){
-				(*stateIt)->setState(TURING_STATE_REJECTED);
-			}
+		}
+		if ((*stateIt)->getState() != TURING_STATE_OLD){
+			(*stateIt)->setState(TURING_STATE_REJECTED);
 		}
 	}
 

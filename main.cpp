@@ -198,7 +198,10 @@ void simulate(){
 	}
 
 	for (;;){
-		bool b_interupt = mashine->reachedFinalState() && !settings.b_continue_if_accepted;
+		bool b_interupt = false;
+		if (mashine->reachedFinalState()){
+			b_interupt = mashine->getStates().empty() || !settings.b_continue_if_accepted;
+		}
 		if (settings.b_debug || b_interupt){
 			bool b_break = false;
 			b_break |= debug.b_step_by_step || b_interupt;
@@ -417,7 +420,7 @@ int main(int argc, const char *argv[]){
 		std::cin.rdbuf(in.rdbuf());
 		settings.b_quiet = true;
 	}
-	// read turing mashine from std::cin
+	// read tur	ing mashine from std::cin
 	readTM();
 	if (settings.b_one_input_file){
 		settings.b_quiet = true;
