@@ -97,7 +97,7 @@ void readTM(){
 
 	for (; n_edges != 0; n_edges--){
 		if (!settings.b_quiet){
-			std::cout << "[EDGE 5-TUPLE]\t";
+			std::cout << "[EDGE 5-TUPLE]\t\t\t";
 		}
 		memset(&tuple, 0, sizeof(tuple));
 		std::cin >> tuple.from_id >> tuple.read >> tuple.write >> tuple.to_id >> tuple.move;
@@ -122,11 +122,11 @@ void readBand(){
 	std::cin >> n_first;
 
 	if (!settings.b_quiet){
-		std::cout << "Please enter data now" << std::endl;
+		std::cout << "Please enter data now." << std::endl;
 	}
 
 	if (!settings.b_quiet){
-		std::cout << "[BAND DATA]\t";
+		std::cout << "[BAND DATA]\t\t\t";
 	}
 
 	std::cin.ignore();
