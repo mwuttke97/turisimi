@@ -80,13 +80,13 @@ TuringState::TuringState(const TuringState& state) : m_band() {
 	m_vertice	= state.m_vertice;
 }
 
-TuringState::TuringState(const TuringBand & band, const TURING_DATA &pointer, const TURING_STATE &state, const TURING_VERTICE &vertice) : m_band() {
+TuringState::TuringState(const TuringBand & band, const TURING_POINTER &pointer, const TURING_STATE &state, const TURING_VERTICE &vertice) : m_band() {
 	m_band		= band;
 	m_pointer	= pointer;
 	m_state		= state;
 	m_vertice	= vertice;
 }
 
-TuringState* TuringState::clone() {
-	return new TuringState(*m_band.clone(), m_pointer, m_state, m_vertice);
+TuringState* TuringState::clone() const{
+	return new TuringState(m_band, m_pointer, m_state, m_vertice);
 }

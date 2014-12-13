@@ -25,9 +25,9 @@ public:
 private:
 	TuringState(
 			const TuringBand & band,
-			const TURING_DATA &pointer	= TURING_INIT_POINTER,
-			const TURING_STATE &state	= TURING_INIT_STATE,
-			const TURING_VERTICE &vertice = TURING_INIT_VERTICE);
+			const TURING_POINTER &pointer	= TURING_INIT_POINTER,
+			const TURING_STATE &state		= TURING_INIT_STATE,
+			const TURING_VERTICE &vertice	= TURING_INIT_VERTICE);
 
 public:
 	TuringBand* getBand() const;
@@ -45,7 +45,7 @@ public:
 	void write(TURING_BAND_DATA data);
 
 public:
-	TuringState * clone();
+	TuringState * clone() const;
 	TURING_VERTICE getVertice() const;
 	void setVertice(TURING_VERTICE node_id);
 };

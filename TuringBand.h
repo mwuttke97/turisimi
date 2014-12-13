@@ -23,6 +23,8 @@ private:
 	TuringBandMap m_band;
 	bool m_emty;
 
+	void copyMap(TuringBandMap const & band);
+
 public:
 	TuringBand();
 	~TuringBand();
@@ -37,6 +39,9 @@ public:
 	TURING_POINTER getFirst() const;
 	TURING_POINTER getLast() const;
 	TuringBand * clone();
+
+public:
+	void operator =(const TuringBand & band);
 };
 
 #endif /* TURINGBAND_H_ */

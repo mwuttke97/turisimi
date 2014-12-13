@@ -62,15 +62,19 @@ TuringBand::~TuringBand() {
 	clear();
 }
 
-TuringBand::TuringBand(TuringBandMap& band, bool emty) : m_band() {
-	TuringBandPair * pair;
-	TuringBandMap::iterator it;
+void TuringBand::copyMap(TuringBandMap const & band) {
+	TuringBandPair* pair;
+	TuringBandMap::const_iterator it;
 	TuringBandMap::size_type c;
-	for ( it = band.begin(),  c = 0; it != band.end(); it++, c++){
+	for (it = band.begin(), c = 0; it != band.end(); it++, c++) {
 		pair = new TuringBandPair();
 		*pair = **it;
 		m_band.push_back(pair);
 	}
+}
+
+TuringBand::TuringBand(TuringBandMap& band, bool emty) : m_band() {
+	copyMap(band);
 	m_emty = emty;
 }
 
@@ -94,4 +98,10 @@ TURING_POINTER TuringBand::getLast() const {
 
 TuringBand * TuringBand::clone() {
 	return new TuringBand(m_band, m_emty);
+}
+
+void TuringBand::operator =(const TuringBand& band) {
+	m_band.clear();
+	copyMap(band.m_band);
+	m_emty = band.m_emty;
 }
