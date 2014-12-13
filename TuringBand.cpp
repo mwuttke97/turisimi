@@ -7,14 +7,6 @@
 
 #include "TuringBand.h"
 
-bool TuringBand::isEmty() {
-	return m_emty;
-}
-
-bool TuringBand::isEmty(TURING_POINTER index) {
-	return get(index) == TURING_PLACE_HOLDER;
-}
-
 void TuringBand::clear() {
 	while (!m_band.empty()){
 		if (m_band.back())
@@ -51,11 +43,9 @@ void TuringBand::write(TURING_POINTER index, TURING_BAND_DATA value) {
 	pair->m_data = value;
 	if (b_new)
 		m_band.push_back(pair);
-	m_emty &= (value == TURING_PLACE_HOLDER);
 }
 
 TuringBand::TuringBand() : m_band() {
-	m_emty = true;
 }
 
 TuringBand::~TuringBand() {
@@ -73,9 +63,8 @@ void TuringBand::copyMap(TuringBandMap const & band) {
 	}
 }
 
-TuringBand::TuringBand(TuringBandMap& band, bool emty) : m_band() {
+TuringBand::TuringBand(TuringBandMap& band) : m_band() {
 	copyMap(band);
-	m_emty = emty;
 }
 
 TURING_POINTER TuringBand::getFirst() const {
@@ -97,11 +86,10 @@ TURING_POINTER TuringBand::getLast() const {
 }
 
 TuringBand * TuringBand::clone() {
-	return new TuringBand(m_band, m_emty);
+	return new TuringBand(m_band);
 }
 
 void TuringBand::operator =(const TuringBand& band) {
 	m_band.clear();
 	copyMap(band.m_band);
-	m_emty = band.m_emty;
 }

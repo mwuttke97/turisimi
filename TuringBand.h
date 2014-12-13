@@ -21,18 +21,14 @@ typedef std::vector<TuringBandPair*> TuringBandMap;
 class TuringBand {
 private:
 	TuringBandMap m_band;
-	bool m_emty;
-
 	void copyMap(TuringBandMap const & band);
 
 public:
 	TuringBand();
 	~TuringBand();
-	TuringBand(TuringBandMap & band, bool emty = true);
+	TuringBand(TuringBandMap & band);
 
 public:
-	bool isEmty();
-	bool isEmty(TURING_POINTER index);
 	TURING_BAND_DATA get(TURING_POINTER index);
 	void write(TURING_POINTER index, TURING_BAND_DATA value);
 	void clear();
