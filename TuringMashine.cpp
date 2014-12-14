@@ -124,7 +124,7 @@ void TuringMashine::doStep() {
 
 		// search for good tuples
 		for (tupleIt = m_tuples.begin(); tupleIt != m_tuples.end(); tupleIt++){
-			if ((*tupleIt)->getFromId() == state->getPointer()){
+			if ((*tupleIt)->getFromId() == state->getVertice()){
 				if ((*tupleIt)->getRead() == read){
 					TuringState * clonedState = state->clone();
 					clonedState->setState(cloneState);
