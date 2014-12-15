@@ -32,6 +32,8 @@ static struct{
 	const char * str_debug_out;
 	const char * str_band_in;
 	const char * str_band_out;
+
+	TURING_POINTER p_first_band_data_pointer;
 } settings;
 
 static struct{
@@ -63,6 +65,11 @@ void toggleBreakPoints(std::string arg) {
 void toggleBreakPoints(const char* arg) {
 	std::stringstream ss(arg);
 	toggleBreakPoints(ss);
+}
+
+void setInitPointer(const char * arg){
+	std::stringstream ss(arg);
+	ss >> settings.p_first_band_data_pointer;
 }
 
 void readTM(){
@@ -113,26 +120,15 @@ void readTM(){
 }
 
 void readBand(){
-	TURING_POINTER n_first;
 	std::string line;
-
-	if (!settings.b_quiet){
-		std::cout << "Band's first data pointer:\t";
-	}
-	std::cin >> n_first;
-
-	if (!settings.b_quiet){
-		std::cout << "Please enter data now." << std::endl;
-	}
 
 	if (!settings.b_quiet){
 		std::cout << "[BAND DATA]\t\t\t";
 	}
 
-	std::cin.ignore();
 	std::getline(std::cin, line);
-	for (size_t n = 0; n < line.length(); n++){
-		mashine->addBandData(n, line[n] + n_first);
+	for (TURING_POINTER n = 0; n < (TURING_POINTER) line.length(); n++){
+		mashine->addBandData(n + settings.p_first_band_data_pointer, line[n]);
 	}
 
 	if (!settings.b_quiet){
@@ -296,6 +292,7 @@ int main(int argc, const char *argv[]){
 	settings.str_debug_out = "-";
 	settings.str_band_in = "-";
 	settings.str_band_out = "-";
+	settings.p_first_band_data_pointer = TURING_INIT_POINTER;
 
 	debug.b_step_by_step = false;
 	debug.v_break_points.clear();
@@ -311,6 +308,7 @@ int main(int argc, const char *argv[]){
 			ARG_FILE_DEBUG_IN,
 			ARG_FILE_DEBUG_OUT,
 			ARG_DEBUG_BREAK_POINTS,
+			ARG_TURING_INIT_POINTER,
 		} current_arg = ARG_NEW_ARG;
 
 		for (int n = 1; n < argc; n++){
@@ -366,6 +364,10 @@ int main(int argc, const char *argv[]){
 					current_arg = ARG_DEBUG_BREAK_POINTS;
 					break;
 				}
+				if (!strcmp("-p", arg) || !strcmp("--band-init", arg)){
+					current_arg = ARG_TURING_INIT_POINTER;
+					break;
+				}
 
 				if (!strcmp("-h", arg) || !strcmp("--help", arg)){
 					help::help_args(prgm);
@@ -406,6 +408,11 @@ int main(int argc, const char *argv[]){
 
 			case ARG_DEBUG_BREAK_POINTS:
 				toggleBreakPoints(arg);
+				current_arg = ARG_NEW_ARG;
+				break;
+
+			case ARG_TURING_INIT_POINTER:
+				setInitPointer(arg);
 				current_arg = ARG_NEW_ARG;
 				break;
 
