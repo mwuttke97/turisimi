@@ -32,6 +32,7 @@ static struct{
 	const char * str_debug_out;
 	const char * str_band_in;
 	const char * str_band_out;
+	unsigned long n_trace_lenght;
 
 	TURING_POINTER p_first_band_data_pointer;
 } settings;
@@ -145,7 +146,7 @@ void writeBand(const TuringState& state) {
 	n_last		= std::max(band->getLast(), n_pointer);
 	n_width		= n_last - n_first;
 
-	std::stringstream line0, line1, line2 /*(std::string(n_width * 2 + 10, ' '))*/;
+	std::stringstream line0, line1, line2;
 
 	for (auto i = n_first; i <= n_last; i++){
 		line0 << band->get(i) << " ";
@@ -166,24 +167,28 @@ void writeBand(const TuringState& state) {
 }
 
 void writeState(const TuringState & state){
-	std::cout
-		<< "State: " << turingStateString(state.getState()) << "; " << std::endl
-		<< "Trace: ";
+	std::cout << "State: " << turingStateString(state.getState()) << "; " << std::endl;
 
-	std::string str_history;
-
-	{
+	if (settings.n_trace_lenght != 0){
+		std::cout << "Trace: ";
+		std::string str_history;
+		unsigned long l_count;
+		TuringStateIterator it;
 		std::stringstream ss_buffer;
 		ss_buffer << state.getVertice();
 		str_history = ss_buffer.str();
+		for (it = state.getParent(), l_count = 0; it != 0; it = it->getParent(), l_count++){
+			if (l_count < settings.n_trace_lenght){
+				std::stringstream ss_buffer;
+				ss_buffer << it->getVertice();
+				str_history = ss_buffer.str() + " >> " + str_history;
+			} else{
+				str_history = "... >> " + str_history;
+				break;
+			}
+		}
+		std::cout << str_history << std::endl;
 	}
-	for (auto it = state.getParent(); it != 0; it = it->getParent()){
-		std::stringstream ss_buffer;
-		ss_buffer << it->getVertice();
-		str_history = ss_buffer.str() + " >> " + str_history;
-	}
-
-	std::cout << str_history << std::endl;
 	writeBand(state);
 	std::cout << std::endl;
 }
@@ -295,6 +300,7 @@ int main(int argc, const char *argv[]){
 	settings.str_debug_out = "-";
 	settings.str_band_in = "-";
 	settings.str_band_out = "-";
+	settings.n_trace_lenght = 0;
 	settings.p_first_band_data_pointer = TURING_INIT_POINTER;
 
 	debug.b_step_by_step = false;
@@ -311,6 +317,7 @@ int main(int argc, const char *argv[]){
 			ARG_FILE_DEBUG_IN,
 			ARG_FILE_DEBUG_OUT,
 			ARG_DEBUG_BREAK_POINTS,
+			ARG_TRACE_LENGTH,
 			ARG_TURING_INIT_POINTER,
 		} current_arg = ARG_NEW_ARG;
 
@@ -367,6 +374,10 @@ int main(int argc, const char *argv[]){
 					current_arg = ARG_DEBUG_BREAK_POINTS;
 					break;
 				}
+				if (!strcmp("-tl", arg) || !strcmp("--trace-length", arg)){
+					current_arg = ARG_TRACE_LENGTH;
+					break;
+				}
 				if (!strcmp("-p", arg) || !strcmp("--band-init", arg)){
 					current_arg = ARG_TURING_INIT_POINTER;
 					break;
@@ -411,6 +422,14 @@ int main(int argc, const char *argv[]){
 
 			case ARG_DEBUG_BREAK_POINTS:
 				toggleBreakPoints(arg);
+				current_arg = ARG_NEW_ARG;
+				break;
+
+			case ARG_TRACE_LENGTH:
+				if (strcmp(arg, "*") == 0)
+					settings.n_trace_lenght = -1;
+				else
+					settings.n_trace_lenght = atoll(arg);
 				current_arg = ARG_NEW_ARG;
 				break;
 
