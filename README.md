@@ -16,7 +16,6 @@ Some things to be done
 
 > That I'll **not** forget it:
 
- * Restrict the length of the state-stack to the width of the terminal. Add a parameter that aims to change this behavior.
  * Some new **debug commands** like change turing mashine while simulating and delete/change/add states.
  * Implement some more [Examples](Examples).
  * Implent some outputs in`help.cpp`.
