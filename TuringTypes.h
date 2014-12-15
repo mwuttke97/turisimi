@@ -11,10 +11,18 @@
 // Note: VERTICES are sometimes called nodes
 typedef int TURING_DATA, TURING_POINTER, TURING_VERTICE;
 
+#ifdef __INT_MAX__
 enum{
 	TURING_POINTER_MAX = (TURING_POINTER) +__INT_MAX__,
 	TURING_POINTER_MIN = (TURING_POINTER) -__INT_MAX__,
 };
+#else
+#include <limits.h>
+enum{
+	TURING_POINTER_MAX = (TURING_POINTER) INT_MAX,
+	TURING_POINTER_MIN = (TURING_POINTER) INT_MAX,
+};
+#endif // __INT_MAX__
 
 typedef char TURING_BAND_DATA;
 
@@ -31,11 +39,11 @@ enum{
 };
 
 enum{
-	TURING_STATE_INIT	= 'i',
-	TURING_STATE_NORMAL		= 'n',
-	TURING_STATE_ACCEPTED	= 'a',
-	TURING_STATE_REJECTED	= 'r',
-	TURING_STATE_OLD		= 'o',
+	TURING_STATE_INIT		= 1 << 0,
+	TURING_STATE_NORMAL		= 1 << 1,
+	TURING_STATE_ACCEPTED	= 1 << 2,
+	TURING_STATE_REJECTED	= 1 << 3,
+	TURING_STATE_OLD		= 1 << 4,
 };
 
 enum{
