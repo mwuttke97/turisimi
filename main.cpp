@@ -170,17 +170,20 @@ void writeState(const TuringState & state){
 		<< "State: " << turingStateString(state.getState()) << "; " << std::endl
 		<< "Trace: ";
 
-	bool first = true;
-	auto history = state.getHistory();
-	for (auto it = history.begin(); it != history.end(); it++) {
-		if (first){
-			first = false;
-		} else{
-			std::cout << " > ";
-		}
-		std::cout << *it;
+	std::string str_history;
+
+	{
+		std::stringstream ss_buffer;
+		ss_buffer << state.getVertice();
+		str_history = ss_buffer.str();
 	}
-	std::cout << std::endl;
+	for (auto it = state.getParent(); it != 0; it = it->getParent()){
+		std::stringstream ss_buffer;
+		ss_buffer << it->getVertice();
+		str_history = ss_buffer.str() + " >> " + str_history;
+	}
+
+	std::cout << str_history << std::endl;
 	writeBand(state);
 	std::cout << std::endl;
 }

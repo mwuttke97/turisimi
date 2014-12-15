@@ -40,6 +40,7 @@ void TuringMashine::addAcceptingState(TURING_POINTER node_id) {
 	m_accepting_states.push_back(node_id);
 }
 
+
 bool TuringMashine::verticeActive(TURING_VERTICE node_id) {
 	StateList::iterator it;
 	for (it = m_states.begin(); it != m_states.end(); it++){
@@ -57,10 +58,10 @@ bool TuringMashine::verticeActive(TURING_VERTICE node_id) {
 	return false;
 }
 
-void TuringMashine::deleteStates(TURING_STATE binStates) {
+void TuringMashine::deleteStates(TURING_STATE binStates, bool b_delete) {
 	for (auto stateIt = m_states.begin(); stateIt != m_states.end();) {
 		if ((*stateIt)->getState() & binStates) {
-			if (*stateIt)
+			if (b_delete && *stateIt)
 				delete *stateIt;
 			if (stateIt == m_states.begin()) {
 				m_states.pop_front();
@@ -147,8 +148,8 @@ void TuringMashine::doStep() {
 		}
 	}
 
-	// delete old and rejected states
-	deleteStates(TURING_STATE_REJECTED | TURING_STATE_OLD);
+	// remove old and rejected states
+	deleteStates(TURING_STATE_REJECTED | TURING_STATE_OLD, false);
 }
 
 void TuringMashine::loopyStupi() {
@@ -157,7 +158,12 @@ void TuringMashine::loopyStupi() {
 	}
 }
 
-TuringMashine::TuringMashine() {
-	m_states.push_back(new TuringState());
+TuringMashine::TuringMashine() : m_init_state(new TuringState())  {
+	m_states.push_back(m_init_state);
 	m_final_state = TURING_INIT_STATE;
+}
+
+TuringMashine::~TuringMashine() {
+	if (m_init_state)
+		delete m_init_state;
 }

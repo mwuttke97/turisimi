@@ -24,12 +24,14 @@ private:
 	TupleVector m_tuples;
 	StateList m_states;
 	TuringPointerVector m_accepting_states;
+	const TuringStateIterator m_init_state;
 	TURING_STATE m_final_state;
 
-	void deleteStates(TURING_STATE binStates);
+	void deleteStates(TURING_STATE binStates, bool b_delete = false);
 
 public:
 	TuringMashine();
+	~TuringMashine();
 
 public:
 	const StateList& getStates() const;
