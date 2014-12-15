@@ -25,6 +25,7 @@ static struct{
 	bool b_quiet;
 	bool b_was_quiet;
 	bool b_debug;
+	bool b_verbose;
 	bool b_one_input_file;
 	bool b_continue_if_accepted;
 	const char * str_tm_in;
@@ -277,6 +278,8 @@ void simulate(){
 					help::invalid_input_simulate_break();
 				}
 			}
+		} else if (settings.b_verbose){
+			writeStates();
 		}
 		mashine->doStep();
 	}
@@ -293,6 +296,7 @@ int main(int argc, const char *argv[]){
 	settings.b_quiet = false;
 	settings.b_was_quiet = false;
 	settings.b_debug = false;
+	settings.b_verbose = false;
 	settings.b_one_input_file = false;
 	settings.b_continue_if_accepted = false;
 	settings.str_tm_in = "-";
@@ -361,6 +365,11 @@ int main(int argc, const char *argv[]){
 				if (!strcmp("-sbs", arg) || !strcmp("--step_by_step", arg)){
 					settings.b_debug	= true;
 					debug.b_step_by_step= true;
+					current_arg = ARG_NEW_ARG;
+					break;
+				}
+				if (!strcmp("-v", arg) || !strcmp("--verbose", arg)){
+					settings.b_verbose = true;
 					current_arg = ARG_NEW_ARG;
 					break;
 				}
