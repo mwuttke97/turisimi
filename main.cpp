@@ -415,10 +415,6 @@ int main(int argc, const char *argv[]){
 				setInitPointer(arg);
 				current_arg = ARG_NEW_ARG;
 				break;
-
-			default:
-				help::invalid_args(prgm, arg);
-				exit(0);
 			}
 		}
 	}
