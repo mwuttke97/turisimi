@@ -16,6 +16,8 @@ Some things to be done
 
 > That I'll **not** forget it:
 
- * Some new debug commands as changing the turing mashine while simulating or delete/change/add states.
- * When this is finished: Implent some outputs in`help.cpp`.
+ * Restrict the length of the state-stack to the width of the terminal. Add a parameter that aims to change this behavior.
+ * Some new **debug commands** like change turing mashine while simulating and delete/change/add states.
+ * Implement some more [Examples](Examples).
+ * Implent some outputs in`help.cpp`.
  * Maybe (ASCII-) graphical Turing Mashine output. (But I think this verry is not trival at all.)
