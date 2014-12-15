@@ -251,7 +251,7 @@ void simulate(){
 						break;
 					}
 					if (str_input == "q" || str_input == "quit"){
-						exit(1);
+						return;
 					}
 					if (str_input == "h" || str_input == "help"){
 						help::help_step_cmd();
@@ -482,6 +482,8 @@ int main(int argc, const char *argv[]){
 
 	if (out.is_open())
 		out.close();
+
+	delete mashine;
 
 	return 1;
 }
