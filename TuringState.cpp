@@ -90,7 +90,7 @@ TuringState::TuringState(const TuringState& state) : m_band(), m_history() {
 TuringState::TuringState(const TuringBand &band, const TuringStateHistory &history,
 		const TURING_POINTER &pointer, const TURING_STATE &state, const TURING_VERTICE &vertice) : m_band(), m_history() {
 	for (auto it = history.begin(); it != history.end(); it++){
-		m_history.push_front(*it);
+		m_history.push_back(*it);
 	}
 	m_band		= band;
 	m_pointer	= pointer;
