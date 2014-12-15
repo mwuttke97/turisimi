@@ -58,11 +58,10 @@ bool TuringMashine::verticeActive(TURING_VERTICE node_id) {
 	return false;
 }
 
-void TuringMashine::deleteStates(TURING_STATE binStates, bool b_delete) {
+// MUST _N_O_T_ DELETE STATES IN THE STATES TREE
+void TuringMashine::deleteStates(TURING_STATE binStates) {
 	for (auto stateIt = m_states.begin(); stateIt != m_states.end();) {
 		if ((*stateIt)->getState() & binStates) {
-			if (b_delete && *stateIt)
-				delete *stateIt;
 			if (stateIt == m_states.begin()) {
 				m_states.pop_front();
 				stateIt = m_states.begin();
@@ -129,6 +128,7 @@ void TuringMashine::doStep() {
 					clonedState->write((*tupleIt)->getWrite());
 					clonedState->move((*tupleIt)->getMove());
 					clonedState->setVertice((*tupleIt)->getToId());
+					m_latest_state = clonedState;
 					m_states.push_front(clonedState);
 					state->setState(TURING_STATE_OLD);
 				}
@@ -148,8 +148,9 @@ void TuringMashine::doStep() {
 		}
 	}
 
-	// remove old and rejected states
-	deleteStates(TURING_STATE_REJECTED | TURING_STATE_OLD, false);
+	// remove old and rejected states;
+	// rejected states will be DELETED.
+	deleteStates(TURING_STATE_REJECTED | TURING_STATE_OLD);
 }
 
 void TuringMashine::loopyStupi() {
@@ -158,12 +159,15 @@ void TuringMashine::loopyStupi() {
 	}
 }
 
-TuringMashine::TuringMashine() : m_init_state(new TuringState())  {
-	m_states.push_back(m_init_state);
+TuringMashine::TuringMashine() {
+	m_latest_state = new TuringState();
+	m_states.push_back(m_latest_state);
 	m_final_state = TURING_INIT_STATE;
 }
 
 TuringMashine::~TuringMashine() {
-	if (m_init_state)
-		delete m_init_state;
+	// Delete only the "latest" state.
+	// The rest will be deleted, through.
+	if (m_latest_state)
+		delete m_latest_state;
 }

@@ -5,6 +5,7 @@
  *      Author: maxi
  */
 
+#include <string.h> // memcpy()
 #include "TuringState.h"
 
 TuringBand* TuringState::getBand() const {
@@ -71,19 +72,38 @@ void TuringState::write(TURING_BAND_DATA data) {
 	m_band.write(m_pointer, data);
 }
 
-TuringState::TuringState() : m_band(), m_parent(0) {
+TuringState::TuringState() : m_band(), m_parent(0), m_child_right(0), m_brother_left(0) {
 	this->m_state	= TURING_INIT_STATE;
 	this->m_pointer	= TURING_INIT_POINTER;
 	this->m_vertice = TURING_INIT_VERTICE;
 }
 
-TuringState::TuringState(const TuringState& parentState) : m_band(), m_parent((TuringStateIterator) &parentState){
+TuringState::TuringState(TuringState& parentState) : m_band(), m_parent((TuringStateIterator) &parentState), m_child_right(0){
 	m_band		= parentState.m_band;
 	m_pointer	= parentState.m_pointer;
 	m_state		= parentState.m_state;
 	m_vertice	= parentState.m_vertice;
+	m_brother_left = parentState.m_child_right;
+	parentState.m_child_right = this;
+}
+
+TuringState::~TuringState() {
+	TuringStateIterator buffer;
+	if (m_parent){
+		buffer = m_parent->m_child_right;
+		if (this == buffer){
+			for (TuringStateIterator it = m_brother_left; it != 0; it = buffer){
+				buffer = it->m_brother_left;
+				it->m_parent = 0;
+				delete it;
+			}
+			delete m_parent;
+		} else{
+			delete buffer;
+		}
+	}
 }
 
 TuringState* TuringState::clone() const{
-	return new TuringState(*this);
+	return new TuringState((TuringState&) *this);
 }

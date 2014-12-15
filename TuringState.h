@@ -22,11 +22,14 @@ private:
 	TURING_POINTER m_pointer;
 	TURING_STATE m_state;
 	TURING_VERTICE m_vertice;
-	const TuringStateIterator m_parent;
+	TuringStateIterator m_parent;
+	TuringStateIterator m_child_right;
+	TuringStateIterator m_brother_left;
 
 public:
 	TuringState();
-	TuringState(const TuringState & parentState);
+	TuringState(TuringState & parentState);
+	~TuringState();
 
 public:
 	TuringBand* getBand() const;
