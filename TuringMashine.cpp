@@ -148,6 +148,19 @@ void TuringMashine::doStep() {
 		}
 	}
 
+	if (m_final_state == TURING_STATE_NORMAL){
+		bool b_rejected = true;
+		for (stateIt = m_states.begin(); stateIt != m_states.end(); stateIt++){
+			if ((*stateIt)->getState() == TURING_STATE_NORMAL){
+				b_rejected = false;
+				break;
+			}
+		}
+		if (b_rejected){
+			m_final_state = TURING_STATE_REJECTED;
+		}
+	}
+	
 	// remove old and rejected states;
 	// rejected states will be DELETED.
 	deleteStates(TURING_STATE_REJECTED | TURING_STATE_OLD);
