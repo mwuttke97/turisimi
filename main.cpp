@@ -232,7 +232,7 @@ void simulate(){
 						std::cout << ">> ";
 					}
 					std::getline(std::cin, str_input);
-					if (str_input == "s" || str_input == "step"){
+					if (str_input.empty() || str_input == "s" || str_input == "step"){
 						break;
 					}
 					if (str_input == "td" || str_input == "toggle debug"){
