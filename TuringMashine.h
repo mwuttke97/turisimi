@@ -26,7 +26,7 @@ private:
 	TuringPointerVector m_accepting_states;
 	TURING_STATE m_final_state;
 
-	void deleteStates(TURING_STATE stateToDelete);
+	void deleteStates(TURING_STATE binStates);
 
 public:
 	TuringMashine();

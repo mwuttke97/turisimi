@@ -57,9 +57,9 @@ bool TuringMashine::verticeActive(TURING_VERTICE node_id) {
 	return false;
 }
 
-void TuringMashine::deleteStates(TURING_STATE stateToDelete) {
+void TuringMashine::deleteStates(TURING_STATE binStates) {
 	for (auto stateIt = m_states.begin(); stateIt != m_states.end();) {
-		if ((*stateIt)->getState() == stateToDelete) {
+		if ((*stateIt)->getState() & binStates) {
 			if (*stateIt)
 				delete *stateIt;
 			if (stateIt == m_states.begin()) {
@@ -79,9 +79,6 @@ void TuringMashine::doStep() {
 	TURING_BAND_DATA read;
 	StateList::iterator stateIt;
 	TupleVector::iterator tupleIt;
-
-	// delete old states
-	deleteStates(TURING_STATE_OLD);
 
 	switch (m_final_state){
 	case TURING_STATE_INIT:
@@ -150,8 +147,8 @@ void TuringMashine::doStep() {
 		}
 	}
 
-	// delete rejected states
-	deleteStates(TURING_STATE_REJECTED);
+	// delete old and rejected states
+	deleteStates(TURING_STATE_REJECTED | TURING_STATE_OLD);
 }
 
 void TuringMashine::loopyStupi() {
