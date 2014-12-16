@@ -14,10 +14,6 @@ const TuringMashine::TupleVector& TuringMashine::getTuples() const {
 	return m_tuples;
 }
 
-const TuringMashine::StateList& TuringMashine::getStates() const {
-	return m_states;
-}
-
 TURING_STATE TuringMashine::getFinalState() const {
 	return m_final_state;
 }
@@ -31,7 +27,7 @@ void TuringMashine::addTuple(const TuringTuple * tuple) {
 }
 
 void TuringMashine::addBandData(TURING_POINTER index, TURING_BAND_DATA value) {
-	for (StateList::iterator it = m_states.begin(); it != m_states.end(); it++){
+	for (auto it = m_latest_state->getIteratorH(); *it != 0; it++){
 		(*it)->getBand()->write(index, value);
 	}
 }
@@ -40,10 +36,15 @@ void TuringMashine::addAcceptingState(TURING_POINTER node_id) {
 	m_accepting_states.push_back(node_id);
 }
 
+TuringStateHIterator TuringMashine::getStates() const {
+	if (m_latest_state){
+		return m_latest_state->getIteratorH();
+	}
+	return TuringStateHIterator();
+}
 
 bool TuringMashine::verticeActive(TURING_VERTICE node_id) {
-	StateList::iterator it;
-	for (it = m_states.begin(); it != m_states.end(); it++){
+	for (auto it = m_latest_state->getIteratorH(); *it != 0; it++){
 		if ((*it)->getVertice() == node_id){
 			switch((*it)->getState()){
 			case TURING_STATE_ACCEPTED:
@@ -58,26 +59,9 @@ bool TuringMashine::verticeActive(TURING_VERTICE node_id) {
 	return false;
 }
 
-// MUST _N_O_T_ DELETE STATES IN THE STATES TREE
-void TuringMashine::deleteStates(TURING_STATE binStates) {
-	for (auto stateIt = m_states.begin(); stateIt != m_states.end();) {
-		if ((*stateIt)->getState() & binStates) {
-			if (stateIt == m_states.begin()) {
-				m_states.pop_front();
-				stateIt = m_states.begin();
-			} else {
-				m_states.erase(stateIt--);
-				stateIt++;
-			}
-		} else {
-			stateIt++;
-		}
-	}
-}
-
 void TuringMashine::doStep() {
 	TURING_BAND_DATA read;
-	StateList::iterator stateIt;
+	TuringStateHIterator stateIt;
 	TupleVector::iterator tupleIt;
 
 	switch (m_final_state){
@@ -86,8 +70,9 @@ void TuringMashine::doStep() {
 		break;
 
 	case TURING_STATE_NORMAL:
-		if (m_states.empty()){
+		if (m_latest_state == 0){
 			m_final_state = TURING_STATE_REJECTED;
+			return;
 		}
 		break;
 
@@ -99,7 +84,7 @@ void TuringMashine::doStep() {
 		break;
 	}
 
-	for (stateIt = m_states.begin(); stateIt != m_states.end(); stateIt++){
+	for (stateIt = m_latest_state->getIteratorH_right(); *stateIt != 0; stateIt--){
 		TuringState * state = *stateIt;
 		TURING_STATE cloneState;
 		switch (state->getState()){
@@ -115,6 +100,8 @@ void TuringMashine::doStep() {
 		case TURING_STATE_OLD:
 		case TURING_STATE_REJECTED:
 		default:
+			(*stateIt)->erase(true);
+			delete *stateIt;
 			continue;
 		}
 		read = state->peek();
@@ -129,7 +116,6 @@ void TuringMashine::doStep() {
 					clonedState->move((*tupleIt)->getMove());
 					clonedState->setVertice((*tupleIt)->getToId());
 					m_latest_state = clonedState;
-					m_states.push_front(clonedState);
 					state->setState(TURING_STATE_OLD);
 				}
 			}
@@ -140,7 +126,7 @@ void TuringMashine::doStep() {
 	}
 
 	if (!reachedFinalState()){
-		for (stateIt = m_states.begin(); stateIt != m_states.end(); stateIt++){
+		for (stateIt = m_latest_state->getIteratorH(); *stateIt != 0; stateIt++){
 			if (std::find(m_accepting_states.begin(), m_accepting_states.end(), (*stateIt)->getVertice()) != m_accepting_states.end()){
 				(*stateIt)->setState(TURING_STATE_ACCEPTED);
 				m_final_state = TURING_STATE_ACCEPTED;
@@ -150,7 +136,7 @@ void TuringMashine::doStep() {
 
 	if (m_final_state == TURING_STATE_NORMAL){
 		bool b_rejected = true;
-		for (stateIt = m_states.begin(); stateIt != m_states.end(); stateIt++){
+		for (stateIt = m_latest_state->getIteratorH(); *stateIt != 0; stateIt++){
 			if ((*stateIt)->getState() == TURING_STATE_NORMAL){
 				b_rejected = false;
 				break;
@@ -160,10 +146,6 @@ void TuringMashine::doStep() {
 			m_final_state = TURING_STATE_REJECTED;
 		}
 	}
-	
-	// remove old and rejected states;
-	// rejected states will be DELETED.
-	deleteStates(TURING_STATE_REJECTED | TURING_STATE_OLD);
 }
 
 void TuringMashine::loopyStupi() {
@@ -174,7 +156,6 @@ void TuringMashine::loopyStupi() {
 
 TuringMashine::TuringMashine() {
 	m_latest_state = new TuringState();
-	m_states.push_back(m_latest_state);
 	m_final_state = TURING_INIT_STATE;
 }
 

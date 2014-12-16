@@ -203,15 +203,11 @@ void writeState(const TuringState & state){
 }
 
 void writeStates(){
-	auto states = mashine->getStates();
-	auto n_states = states.size();
+	std::cout << "Simulation state: " << turingStateString(mashine->getFinalState()) << std::endl;
 
-	std::cout
-		<< "Simulation state: " << turingStateString(mashine->getFinalState()) << std::endl
-		<< "Number of configurations: " << n_states << std::endl << std::endl;
-	for (auto it = states.begin(); it != states.end(); it++){
-		assert(*it);
-		writeState(**it);
+	for (auto states = mashine->getStates(); *states != 0; states++){
+		assert(*states);
+		writeState(**states);
 	}
 	std::cout << std::endl;
 }
@@ -224,7 +220,7 @@ void simulate(){
 	for (;;){
 		bool b_interupt = false;
 		if (mashine->reachedFinalState()){
-			b_interupt = mashine->getStates().empty() || !settings.b_continue_if_accepted;
+			b_interupt = *mashine->getStates() == 0 || !settings.b_continue_if_accepted;
 		}
 		if (settings.b_debug || b_interupt){
 			bool b_break = false;
