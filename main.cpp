@@ -32,6 +32,7 @@ static struct{
 	const char * str_debug_in;
 	const char * str_debug_out;
 	const char * str_band_in;
+	const char * str_band_file_in;
 	const char * str_band_out;
 	unsigned long n_trace_lenght;
 
@@ -124,11 +125,15 @@ void readTM(){
 void readBand(){
 	std::string line;
 
-	if (!settings.b_quiet){
-		std::cout << "[BAND DATA]\t\t\t";
+	if (settings.str_band_in){
+		line += settings.str_band_in;
+	} else{
+		if (!settings.b_quiet){
+			std::cout << "[BAND DATA]\t\t\t";
+		}
+		std::getline(std::cin, line);
 	}
 
-	std::getline(std::cin, line);
 	for (TURING_POINTER n = 0; n < (TURING_POINTER) line.length(); n++){
 		mashine->addBandData(n + settings.p_first_band_data_pointer, line[n]);
 	}
@@ -302,7 +307,8 @@ int main(int argc, const char *argv[]){
 	settings.str_tm_in = "-";
 	settings.str_debug_in = "-";
 	settings.str_debug_out = "-";
-	settings.str_band_in = "-";
+	settings.str_band_in = 0;
+	settings.str_band_file_in = "-";
 	settings.str_band_out = "-";
 	settings.n_trace_lenght = 0;
 	settings.p_first_band_data_pointer = TURING_INIT_POINTER;
@@ -322,6 +328,7 @@ int main(int argc, const char *argv[]){
 			ARG_FILE_DEBUG_OUT,
 			ARG_DEBUG_BREAK_POINTS,
 			ARG_TRACE_LENGTH,
+			ARG_TURING_BAND_DATA,
 			ARG_TURING_INIT_POINTER,
 		} current_arg = ARG_NEW_ARG;
 
@@ -344,6 +351,11 @@ int main(int argc, const char *argv[]){
 				if (!strcmp("-i", arg) || !strcmp("-in", arg) || !strcmp("--input", arg)){
 					settings.b_one_input_file = true;
 					current_arg = ARG_FILE_INPUT;
+					break;
+				}
+
+				if (!strcmp("-b", arg) || !strcmp("--band", arg)){
+					current_arg = ARG_TURING_BAND_DATA;
 					break;
 				}
 				if (!strcmp("-bin", arg) || !strcmp("--band_in", arg)){
@@ -400,7 +412,7 @@ int main(int argc, const char *argv[]){
 
 			case ARG_FILE_INPUT:
 				settings.str_tm_in = arg;
-				settings.str_band_in = arg;
+				settings.str_band_file_in = arg;
 				current_arg = ARG_NEW_ARG;
 				break;
 
@@ -410,7 +422,7 @@ int main(int argc, const char *argv[]){
 				break;
 
 			case ARG_FILE_BAND_IN:
-				settings.str_band_in = arg;
+				settings.str_band_file_in = arg;
 				current_arg = ARG_NEW_ARG;
 				break;
 
@@ -439,6 +451,11 @@ int main(int argc, const char *argv[]){
 					settings.n_trace_lenght = -1;
 				else
 					settings.n_trace_lenght = atoll(arg);
+				current_arg = ARG_NEW_ARG;
+				break;
+
+			case ARG_TURING_BAND_DATA:
+				settings.str_band_in = arg;
 				current_arg = ARG_NEW_ARG;
 				break;
 
@@ -471,9 +488,9 @@ int main(int argc, const char *argv[]){
 		settings.b_quiet = true;
 	} else{
 		std::cin.rdbuf(cinbuff);
-		if (strcmp("-", settings.str_band_in) != 0){
-			// redirect std::cin to input file if `settings.str_band_in` is not equal to "-"
-			in.open(settings.str_band_in, std::ios::in);
+		if (strcmp("-", settings.str_band_file_in) != 0){
+			// redirect std::cin to input file if `settings.str_band_file_in` is not equal to "-"
+			in.open(settings.str_band_file_in, std::ios::in);
 			std::cin.rdbuf(in.rdbuf());
 		}
 		settings.b_quiet = settings.b_was_quiet;
