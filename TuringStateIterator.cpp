@@ -35,27 +35,27 @@ TuringStateHIterator::~TuringStateHIterator() {
 
 const TuringState* TuringStateHIterator::operator ++(void) {
 	if (m_pointer)
-		m_pointer = m_pointer->m_brother_left;
+		m_pointer = m_pointer->m_brother_right;
 	return m_pointer;
 }
 
 const TuringState* TuringStateHIterator::operator ++(int) {
 	const TuringState * buffer = m_pointer;
 	if (m_pointer)
-		m_pointer = m_pointer->m_brother_left;
+		m_pointer = m_pointer->m_brother_right;
 	return buffer;
 }
 
 const TuringState* TuringStateHIterator::operator --(void) {
 	if (m_pointer)
-		m_pointer = m_pointer->m_brother_right;
+		m_pointer = m_pointer->m_brother_left;
 	return m_pointer;
 }
 
 const TuringState* TuringStateHIterator::operator --(int) {
 	const TuringState * buffer = m_pointer;
 	if (m_pointer)
-		m_pointer = m_pointer->m_brother_right;
+		m_pointer = m_pointer->m_brother_left;
 	return buffer;
 }
 
