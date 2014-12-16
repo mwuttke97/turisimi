@@ -37,6 +37,13 @@ public:
 };
 
 class TuringStateVIterator : virtual public TuringStateIterator{
+private:
+	// UP_RIGHT is default.
+	enum{
+		UP_LEFT,
+		UP_RIGHT,
+	} m_up_direction;
+
 public:
 	TuringStateVIterator();
 	TuringStateVIterator(TuringState * pointer);
@@ -45,6 +52,10 @@ public:
 	virtual const TuringState * operator++(int);
 	virtual const TuringState * operator--(void);
 	virtual const TuringState * operator--(int);
+
+public:
+	void setUpLeft();
+	void setUpRight();
 };
 
 

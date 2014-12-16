@@ -60,25 +60,37 @@ const TuringState* TuringStateHIterator::operator --(int) {
 }
 
 TuringStateVIterator::TuringStateVIterator() : TuringStateIterator() {
+	m_up_direction = UP_RIGHT;
 }
 
 TuringStateVIterator::TuringStateVIterator(
 		TuringState* pointer)  : TuringStateIterator(pointer) {
+	m_up_direction = UP_RIGHT;
 }
 
 TuringStateVIterator::~TuringStateVIterator() {
 }
 
 const TuringState* TuringStateVIterator::operator ++(void) {
-	if (m_pointer)
-		m_pointer = m_pointer->m_child_right;
+	if (m_pointer){
+		if (m_up_direction == UP_LEFT)
+			m_pointer = m_pointer->m_child_left;
+
+		if (m_up_direction == UP_RIGHT)
+			m_pointer = m_pointer->m_child_right;
+	}
 	return m_pointer;
 }
 
 const TuringState* TuringStateVIterator::operator ++(int) {
 	const TuringState * buffer = m_pointer;
-	if (m_pointer)
-		m_pointer = m_pointer->m_child_right;
+	if (m_pointer){
+		if (m_up_direction == UP_LEFT)
+			m_pointer = m_pointer->m_child_left;
+
+		if (m_up_direction == UP_RIGHT)
+			m_pointer = m_pointer->m_child_right;
+	}
 	return buffer;
 }
 
@@ -93,4 +105,12 @@ const TuringState* TuringStateVIterator::operator --(int int1) {
 	if (m_pointer)
 		m_pointer = m_pointer->m_parent;
 	return buffer;
+}
+
+void TuringStateVIterator::setUpLeft() {
+	m_up_direction = UP_LEFT;
+}
+
+void TuringStateVIterator::setUpRight() {
+	m_up_direction = UP_RIGHT;
 }
