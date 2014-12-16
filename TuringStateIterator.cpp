@@ -23,12 +23,6 @@ TuringState* TuringStateIterator::operator *(void) {
 	return m_pointer;
 }
 
-const TuringState* TuringStateIterator::operator ++(int) {
-	auto buffer = m_pointer;
-	(*this)++;
-	return buffer;
-}
-
 TuringStateHIterator::TuringStateHIterator() : TuringStateIterator() {
 }
 
@@ -49,6 +43,19 @@ const TuringState* TuringStateHIterator::operator ++(int) {
 	const TuringState * buffer = m_pointer;
 	if (m_pointer)
 		m_pointer = m_pointer->m_brother_left;
+	return buffer;
+}
+
+const TuringState* TuringStateHIterator::operator --(void) {
+	if (m_pointer)
+		m_pointer = m_pointer->m_brother_right;
+	return m_pointer;
+}
+
+const TuringState* TuringStateHIterator::operator --(int) {
+	const TuringState * buffer = m_pointer;
+	if (m_pointer)
+		m_pointer = m_pointer->m_brother_right;
 	return buffer;
 }
 

@@ -69,19 +69,29 @@ void TuringState::write(TURING_BAND_DATA data) {
 	m_band.write(m_pointer, data);
 }
 
-TuringState::TuringState() : m_band(), m_parent(0), m_child_right(0), m_brother_left(0) {
+TuringState::TuringState() : m_band(), m_parent(0), m_child_left(0), m_child_right(0), m_brother_left(0), m_brother_right(0) {
 	this->m_state	= TURING_INIT_STATE;
 	this->m_pointer	= TURING_INIT_POINTER;
 	this->m_vertice = TURING_INIT_VERTICE;
 }
 
-TuringState::TuringState(TuringState& parentState) : m_band(), m_parent(&parentState), m_child_right(0){
+TuringState::TuringState(TuringState& parentState) : m_band(), m_parent(&parentState), m_child_right(0), m_child_left(0) {
 	m_band		= parentState.m_band;
 	m_pointer	= parentState.m_pointer;
 	m_state		= parentState.m_state;
 	m_vertice	= parentState.m_vertice;
 	m_brother_left = parentState.m_child_right;
+
+	if (parentState.m_child_left == 0)
+		parentState.m_child_left = this;
+
+	m_brother_right = 0;
 	parentState.m_child_right = this;
+	if (m_brother_left){
+		if (m_brother_left->m_brother_right == 0){
+			m_brother_left->m_brother_right = this;
+		}
+	}
 }
 
 TuringState::~TuringState() {

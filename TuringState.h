@@ -23,8 +23,10 @@ private:
 	TURING_STATE m_state;
 	TURING_VERTICE m_vertice;
 	TuringState * m_parent;
+	TuringState * m_child_left;
 	TuringState * m_child_right;
 	TuringState * m_brother_left;
+	TuringState * m_brother_right;
 
 public:
 	TuringState();

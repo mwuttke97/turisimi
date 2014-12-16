@@ -20,6 +20,8 @@ public:
 	virtual ~TuringStateIterator();
 	virtual const TuringState * operator++(void) = 0;
 	virtual const TuringState * operator++(int) = 0;
+	virtual const TuringState * operator--(void) = 0;
+	virtual const TuringState * operator--(int) = 0;
 	virtual TuringState * operator*(void);
 };
 
@@ -30,6 +32,8 @@ public:
 	~TuringStateHIterator();
 	virtual const TuringState * operator++(void);
 	virtual const TuringState * operator++(int);
+	virtual const TuringState * operator--(void);
+	virtual const TuringState * operator--(int);
 };
 
 class TuringStateVIterator : virtual public TuringStateIterator{
