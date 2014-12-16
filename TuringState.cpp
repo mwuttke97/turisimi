@@ -75,7 +75,7 @@ TuringState::TuringState() : m_band(), m_parent(0), m_child_left(0), m_child_rig
 	this->m_vertice = TURING_INIT_VERTICE;
 }
 
-TuringState::TuringState(TuringState& parentState) : m_band(), m_parent(&parentState), m_child_right(0), m_child_left(0) {
+TuringState::TuringState(TuringState& parentState) : m_band(), m_parent(&parentState), m_child_left(0), m_child_right(0) {
 	m_band		= parentState.m_band;
 	m_pointer	= parentState.m_pointer;
 	m_state		= parentState.m_state;
