@@ -122,6 +122,13 @@ TuringStateHIterator TuringState::getIteratorH() const {
 	return TuringStateHIterator((TuringState*) this);
 }
 
+TuringStateHIterator TuringState::getIteratorH_right() const {
+	if (m_parent){
+		return TuringStateHIterator((TuringState*) m_parent->m_child_right);
+	}
+	return TuringStateHIterator((TuringState*) this);
+}
+
 TuringStateVIterator TuringState::getIteratorV() const {
 	return TuringStateVIterator((TuringState*) this);
 }

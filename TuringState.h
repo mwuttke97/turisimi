@@ -54,6 +54,7 @@ public:
 	void setVertice(TURING_VERTICE node_id);
 
 	TuringStateHIterator getIteratorH() const;
+	TuringStateHIterator getIteratorH_right() const;
 	TuringStateVIterator getIteratorV() const;
 
 	void erase(bool deleteChildren = true);
