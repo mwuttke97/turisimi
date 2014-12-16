@@ -124,3 +124,22 @@ TuringStateVIterator TuringState::getIteratorV() const {
 	TuringStateVIterator it((TuringState*) this);
 	return it;
 }
+
+void TuringState::erase(bool deleteChildren) {
+	if (m_brother_left){
+		m_brother_left->m_brother_right = m_brother_right;
+	}
+	if (m_brother_right){
+		m_brother_right->m_brother_left = m_brother_left;
+	}
+	if (deleteChildren){
+		auto it = getIteratorH();
+		for (; *it != 0; it++){
+			(*it)->erase(deleteChildren);
+			delete *it;
+		}
+	}
+	m_parent = 0;
+	m_child_left = 0;
+	m_child_right = 0;
+}

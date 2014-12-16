@@ -56,6 +56,8 @@ public:
 	TuringStateHIterator getIteratorH() const;
 	TuringStateVIterator getIteratorV() const;
 
+	void erase(bool deleteChildren = true);
+
 	friend class TuringStateHIterator;
 	friend class TuringStateVIterator;
 };
