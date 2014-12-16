@@ -18,6 +18,8 @@
 #include <queue>
 #include "TuringTypes.h"
 #include "TuringTuple.h"
+#include "TuringState.h"
+#include "TuringStateIterator.h"
 #include "TuringMashine.h"
 #include "Help.h"
 
@@ -179,14 +181,15 @@ void writeState(const TuringState & state){
 		std::cout << "Trace: ";
 		std::string str_history;
 		unsigned long l_count;
-		TuringStateIterator it;
-		std::stringstream ss_buffer;
-		ss_buffer << state.getVertice();
-		str_history = ss_buffer.str();
-		for (it = state.getParent(), l_count = 0; it != 0; it = it->getParent(), l_count++){
-			if (l_count < settings.n_trace_lenght){
+		TuringStateVIterator it;
+		for (it = state.getIteratorV(), l_count = 0; *it != 0; it--, l_count++){
+			if (l_count == 0){
 				std::stringstream ss_buffer;
-				ss_buffer << it->getVertice();
+				ss_buffer << state.getVertice();
+				str_history = ss_buffer.str();
+			} else if (l_count < settings.n_trace_lenght){
+				std::stringstream ss_buffer;
+				ss_buffer << (*it)->getVertice();
 				str_history = ss_buffer.str() + " >> " + str_history;
 			} else{
 				str_history = "... >> " + str_history;

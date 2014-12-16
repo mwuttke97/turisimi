@@ -8,6 +8,7 @@ CPP_SRCS += \
 ../TuringBand.cpp \
 ../TuringMashine.cpp \
 ../TuringState.cpp \
+../TuringStateIterator.cpp \
 ../TuringTuple.cpp \
 ../TuringTypes.cpp \
 ../main.cpp 
@@ -17,6 +18,7 @@ OBJS += \
 ./TuringBand.o \
 ./TuringMashine.o \
 ./TuringState.o \
+./TuringStateIterator.o \
 ./TuringTuple.o \
 ./TuringTypes.o \
 ./main.o 
@@ -26,6 +28,7 @@ CPP_DEPS += \
 ./TuringBand.d \
 ./TuringMashine.d \
 ./TuringState.d \
+./TuringStateIterator.d \
 ./TuringTuple.d \
 ./TuringTypes.d \
 ./main.d 

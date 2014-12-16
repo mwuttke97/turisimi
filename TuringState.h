@@ -11,9 +11,9 @@
 #include <list>
 #include "TuringTypes.h"
 #include "TuringBand.h"
+#include "TuringStateIterator.h"
 
 class TuringState;
-typedef TuringState * TuringStateIterator;
 
 class TuringState {
 
@@ -22,9 +22,9 @@ private:
 	TURING_POINTER m_pointer;
 	TURING_STATE m_state;
 	TURING_VERTICE m_vertice;
-	TuringStateIterator m_parent;
-	TuringStateIterator m_child_right;
-	TuringStateIterator m_brother_left;
+	TuringState * m_parent;
+	TuringState * m_child_right;
+	TuringState * m_brother_left;
 
 public:
 	TuringState();
@@ -50,7 +50,12 @@ public:
 	TuringState * clone() const;
 	TURING_VERTICE getVertice() const;
 	void setVertice(TURING_VERTICE node_id);
-	TuringStateIterator getParent() const;
+
+	TuringStateHIterator getIteratorH() const;
+	TuringStateVIterator getIteratorV() const;
+
+	friend class TuringStateHIterator;
+	friend class TuringStateVIterator;
 };
 
 #endif /* TURINGSTATE_H_ */

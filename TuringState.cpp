@@ -7,6 +7,7 @@
 
 #include <string.h> // memcpy()
 #include "TuringState.h"
+#include "TuringStateIterator.h"
 
 TuringBand* TuringState::getBand() const {
 	return (TuringBand*) &m_band;
@@ -38,10 +39,6 @@ void TuringState::setState(TURING_STATE state) {
 
 TURING_VERTICE TuringState::getVertice() const {
 	return m_vertice;
-}
-
-TuringStateIterator TuringState::getParent() const {
-	return m_parent;
 }
 
 void TuringState::setVertice(TURING_VERTICE node_id) {
@@ -78,7 +75,7 @@ TuringState::TuringState() : m_band(), m_parent(0), m_child_right(0), m_brother_
 	this->m_vertice = TURING_INIT_VERTICE;
 }
 
-TuringState::TuringState(TuringState& parentState) : m_band(), m_parent((TuringStateIterator) &parentState), m_child_right(0){
+TuringState::TuringState(TuringState& parentState) : m_band(), m_parent(&parentState), m_child_right(0){
 	m_band		= parentState.m_band;
 	m_pointer	= parentState.m_pointer;
 	m_state		= parentState.m_state;
@@ -88,14 +85,14 @@ TuringState::TuringState(TuringState& parentState) : m_band(), m_parent((TuringS
 }
 
 TuringState::~TuringState() {
-	TuringStateIterator buffer;
+	TuringState * buffer;
 	if (m_parent){
-		buffer = m_parent->m_child_right;
+		buffer = m_parent;
 		if (this == buffer){
-			for (TuringStateIterator it = m_brother_left; it != 0; it = buffer){
-				buffer = it->m_brother_left;
-				it->m_parent = 0;
-				delete it;
+			TuringStateHIterator it = getIteratorH();
+			for (it++; *it != 0; it++){
+				(*it)->m_parent = 0;
+				delete *it;
 			}
 			delete m_parent;
 		} else{
@@ -106,4 +103,14 @@ TuringState::~TuringState() {
 
 TuringState* TuringState::clone() const{
 	return new TuringState((TuringState&) *this);
+}
+
+TuringStateHIterator TuringState::getIteratorH() const {
+	TuringStateHIterator it((TuringState*) this);
+	return it;
+}
+
+TuringStateVIterator TuringState::getIteratorV() const {
+	TuringStateVIterator it((TuringState*) this);
+	return it;
 }
