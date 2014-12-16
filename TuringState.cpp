@@ -116,13 +116,14 @@ TuringState* TuringState::clone() const{
 }
 
 TuringStateHIterator TuringState::getIteratorH() const {
-	TuringStateHIterator it((TuringState*) this);
-	return it;
+	if (m_parent){
+		return TuringStateHIterator((TuringState*) m_parent->m_child_left);
+	}
+	return TuringStateHIterator((TuringState*) this);
 }
 
 TuringStateVIterator TuringState::getIteratorV() const {
-	TuringStateVIterator it((TuringState*) this);
-	return it;
+	return TuringStateVIterator((TuringState*) this);
 }
 
 void TuringState::erase(bool deleteChildren) {
