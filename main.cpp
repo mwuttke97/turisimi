@@ -404,17 +404,22 @@ void simulate(){
 							continue;
 						}
 					} else if (str_cmd == "state"){
-						TURING_POINTER s;
+						TURING_POINTER arg;
 						std::getline(ss, str_cmd_flags, ' ');
 						if (str_cmd_flags == "erase"){
+							if (ss.eof()){
+								erase_state(0);
+								continue;
+							}
 							while (!ss.eof()){
-								ss >> s;
+								ss >> arg;
 								if (ss.peek() == ',')
 									ss.ignore();
-								erase_state(s);
+								erase_state(arg);
 							}
 							continue;
 						} else if (str_cmd_flags == "add"){
+							// No further arguments allowed
 							if (!str_args.empty()){
 								help::invalid_input_simulate_break();
 								continue;
@@ -422,19 +427,27 @@ void simulate(){
 							add_state();
 							continue;
 						} else if (str_cmd_flags == "clone"){
+							if (ss.eof()){
+								clone_state(0);
+								continue;
+							}
 							while (!ss.eof()){
-								ss >> s;
+								ss >> arg;
 								if (ss.peek() == ',')
 									ss.ignore();
-								clone_state(s);
+								clone_state(arg);
 							}
 							continue;
 						} else if (str_cmd_flags == "edit"){
+							if (ss.eof()){
+								edit_state(0);
+								continue;
+							}
 							while (!ss.eof()){
-								ss >> s;
+								ss >> arg;
 								if (ss.peek() == ',')
 									ss.ignore();
-								edit_state(s);
+								edit_state(arg);
 							}
 							continue;
 						}
