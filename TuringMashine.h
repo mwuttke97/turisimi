@@ -47,6 +47,7 @@ public:
 
 public:
 	bool verticeActive(TURING_VERTICE node_id);
+	bool eraseState(TURING_STATE id);
 };
 
 #endif /* TURINGMASHINE_H_ */

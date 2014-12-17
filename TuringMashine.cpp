@@ -154,6 +154,26 @@ void TuringMashine::loopyStupi() {
 	}
 }
 
+bool TuringMashine::eraseState(TURING_STATE id) {
+	TuringState * buffer;
+	for (auto it = getStates(); *it != 0; it++){
+		if (--id == 0){
+			buffer = *it;
+			if (buffer){
+				buffer->erase();
+				if (buffer == m_latest_state){
+					m_latest_state = (TuringState*) --it;
+					delete buffer;
+					return true;
+				}
+				delete buffer;
+				return true;
+			}
+		}
+	}
+	return true;
+}
+
 TuringMashine::TuringMashine() {
 	m_latest_state = new TuringState();
 	m_final_state = TURING_INIT_STATE;

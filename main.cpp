@@ -212,6 +212,10 @@ void writeStates(){
 	std::cout << std::endl;
 }
 
+void erase_state(TURING_STATE id){
+	mashine->eraseState(id);
+}
+
 void simulate(){
 	if (!settings.b_quiet){
 		std::cout << "Start simulation" << std::endl << std::endl;
@@ -278,9 +282,15 @@ void simulate(){
 							continue;
 						}
 					} else if (str_cmd == "state"){
+						TURING_STATE s;
 						std::getline(ss, str_cmd_flags, ' ');
 						if (str_cmd_flags == "erase"){
-							// TODO
+							while (!ss.eof()){
+								ss >> s;
+								if (ss.peek() == ',')
+									ss.ignore();
+								erase_state(s);
+							}
 							continue;
 						} else if (str_cmd_flags == "add"){
 							// TODO
