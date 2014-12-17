@@ -17,6 +17,7 @@ Some things to be done
 > That I'll **not** forget it:
 
  * Some new **debug commands** like change turing mashine while simulating and delete/change/add states.
+ * Add state-IDs.
  * Implement some more [Examples](Examples).
  * Implent some outputs in`help.cpp`.
  * Maybe (ASCII-) graphical Turing Mashine output. (But I think this verry is not trival at all.)
