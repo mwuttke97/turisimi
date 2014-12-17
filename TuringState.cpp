@@ -151,7 +151,7 @@ TURING_POINTER TuringState::getID() const {
 	return m_id;
 }
 
-void TuringState::erase(bool deleteChildren) {
+void TuringState::erase(bool b_deleteChildren) {
 	TuringState * parent_buffer = m_parent;
 	m_parent = 0;
 	if (parent_buffer){
@@ -167,14 +167,21 @@ void TuringState::erase(bool deleteChildren) {
 	if (m_brother_right){
 		m_brother_right->m_brother_left = m_brother_left;
 	}
-	if (deleteChildren && m_child_left){
+	if (b_deleteChildren){
+		deleteChildren();
+	}
+	m_parent = 0;
+}
+
+
+void TuringState::deleteChildren(){
+	if (m_child_left){
 		auto it = m_child_left->getIteratorH();
 		for (; *it != 0; it++){
-			(*it)->erase(deleteChildren);
+			(*it)->erase(true);
 			delete *it;
 		}
 	}
-	m_parent = 0;
 	m_child_left = 0;
 	m_child_right = 0;
 }

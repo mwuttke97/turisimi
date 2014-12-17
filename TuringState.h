@@ -61,7 +61,8 @@ public:
 	TuringStateVIterator getIteratorV() const;
 	TURING_POINTER getID() const;
 
-	void erase(bool deleteChildren = true);
+	void erase(bool b_deleteChildren = true);
+	void deleteChildren();
 
 	friend class TuringStateHIterator;
 	friend class TuringStateVIterator;

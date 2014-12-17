@@ -214,6 +214,20 @@ TuringState * TuringMashine::cloneState(TURING_POINTER id) {
 	return 0;
 }
 
+TuringState * TuringMashine::spuleBack(TURING_POINTER count){
+	TuringState * buff = m_latest_state;
+	if (buff == 0){
+		return buff;
+	}
+
+	auto it = m_latest_state->getIteratorH();
+	for (it--; *it != 0 && count != 0; it--, count--){
+		m_latest_state = *it;
+	}
+	m_latest_state->deleteChildren();
+	return m_latest_state;
+}
+
 TuringMashine::TuringMashine() {
 	m_latest_state = new TuringState();
 	m_final_state = TURING_INIT_STATE;

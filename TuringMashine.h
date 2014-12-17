@@ -57,6 +57,7 @@ private:
 public:
 	TuringState * addEmtyState();
 	TuringState * cloneState(TURING_POINTER id);
+	TuringState * spuleBack(TURING_POINTER count);
 };
 
 #endif /* TURINGMASHINE_H_ */
