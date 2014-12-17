@@ -175,7 +175,7 @@ void writeBand(const TuringState& state) {
 }
 
 void writeState(const TuringState & state){
-	std::cout << "State: " << turingStateString(state.getState()) << "; " << std::endl;
+	std::cout << "State: " << turingStateString(state.getState()) << "; [" << state.getID() << "] " <<  std::endl;
 
 	if (settings.n_trace_lenght != 0){
 		std::cout << "Trace: ";
@@ -212,8 +212,140 @@ void writeStates(){
 	std::cout << std::endl;
 }
 
-void erase_state(TURING_STATE id){
-	mashine->eraseState(id);
+void erase_state(TURING_POINTER id){
+	if (!mashine->eraseState(id)){
+		std::cout << "Failed to erase state " << id << "." << std::endl;
+	}
+}
+
+void add_state(){
+	TuringState * buff = mashine->addEmtyState();
+	if (buff == 0){
+		std::cout << "Failed to add state." << std::endl;
+	} else{
+		writeState(*buff);
+	}
+}
+
+void clone_state(TURING_POINTER id){
+	TuringState * buff = mashine->cloneState(id);
+	if (buff == 0){
+		std::cout << "Failed to clone state " << id << "." << std::endl;
+	} else{
+		writeState(*buff);
+	}
+}
+
+void edit_state(TURING_POINTER id){
+	TURING_POINTER i;
+	TURING_MOVE_TYPE move;
+
+	auto it = mashine->getStates();
+
+	for (i = 0; i < id; i++){
+		if ((++it)->getID() == id){
+			break;
+		}
+	}
+	TuringState * state = *it;
+
+	if (i > id || *it == 0){
+		std::cout << "No such state: " << id << std::endl;
+		return;
+	}
+
+	enum{
+		NOOP,
+		MOVE,
+		WRITE,
+	} action;
+
+	for (;;) {
+		TURING_POINTER count = 0;
+		TURING_BAND_DATA write = 0;
+
+		if (!settings.b_quiet){
+			writeBand(*state);
+			std::cout << "[EDIT] ";
+		}
+
+		std::string line;
+		std::getline(std::cin, line);
+		std::stringstream ss_line(line);
+		action = NOOP;
+
+		if (line.empty()){
+			action = MOVE;
+			move = MOVE_RIGHT;
+			count = 1;
+		} else{
+			char buffer = ss_line.get();
+
+			switch (buffer){
+			case 'm':
+			case 'M':
+				ss_line >> count;
+				if (ss_line.peek() == ' ')
+					ss_line.ignore();
+				buffer = ss_line.get();
+				break;
+
+			case 'w':
+			case 'W':
+				action = WRITE;
+				if (ss_line.peek() == ' ')
+					ss_line.ignore();
+				ss_line >> write;
+				break;
+
+			default:
+				break;
+			}
+
+			switch (buffer){
+			case MOVE_LEFT:
+			case MOVE_RIGHT:
+				action = MOVE;
+				move = buffer;
+				if (count == 0)
+					count = 1;
+				break;
+
+			case MOVE_STOP:
+				action = NOOP;
+				break;
+
+			default:
+				break;
+			}
+		}
+		switch (action){
+		case MOVE:
+			if (count < 0){
+				count = -count;
+				if (move == MOVE_LEFT)
+					move = MOVE_RIGHT;
+				else
+					move = MOVE_LEFT;
+			}
+			for (; count != 0; count--){
+				state->move(move);
+			}
+			break;
+
+		case WRITE:
+			state->write(write);
+			break;
+
+		case NOOP:
+		default:
+			return;
+		}
+
+		if (!settings.b_quiet){
+			std::cout << std::endl;
+		}
+	}
 }
 
 void simulate(){
@@ -282,21 +414,51 @@ void simulate(){
 							continue;
 						}
 					} else if (str_cmd == "state"){
-						TURING_STATE s;
+						TURING_POINTER arg;
 						std::getline(ss, str_cmd_flags, ' ');
 						if (str_cmd_flags == "erase"){
+							if (ss.eof()){
+								erase_state(0);
+								continue;
+							}
 							while (!ss.eof()){
-								ss >> s;
+								ss >> arg;
 								if (ss.peek() == ',')
 									ss.ignore();
-								erase_state(s);
+								erase_state(arg);
 							}
 							continue;
 						} else if (str_cmd_flags == "add"){
-							// TODO
+							// No further arguments allowed
+							if (!str_args.empty()){
+								help::invalid_input_simulate_break();
+								continue;
+							}
+							add_state();
+							continue;
+						} else if (str_cmd_flags == "clone"){
+							if (ss.eof()){
+								clone_state(0);
+								continue;
+							}
+							while (!ss.eof()){
+								ss >> arg;
+								if (ss.peek() == ',')
+									ss.ignore();
+								clone_state(arg);
+							}
 							continue;
 						} else if (str_cmd_flags == "edit"){
-							// TODO
+							if (ss.eof()){
+								edit_state(0);
+								continue;
+							}
+							while (!ss.eof()){
+								ss >> arg;
+								if (ss.peek() == ',')
+									ss.ignore();
+								edit_state(arg);
+							}
 							continue;
 						}
 					}

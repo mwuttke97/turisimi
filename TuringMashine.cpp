@@ -162,14 +162,14 @@ void TuringMashine::loopyStupi() {
 	}
 }
 
-bool TuringMashine::eraseState(TURING_STATE id) {
+bool TuringMashine::eraseState(TURING_POINTER id) {
 	for (TuringStateHIterator it = getStates(); *it != 0; it++){
-		if (--id == 0){
+		if (id-- == 0){
 			eraseState(it);
 			return true;
 		}
 	}
-	return true;
+	return false;
 }
 
 void TuringMashine::eraseState(TuringStateHIterator & it){
@@ -184,6 +184,34 @@ void TuringMashine::eraseState(TuringStateHIterator & it){
 		buffer->erase(true);
 		delete buffer;
 	}
+}
+
+TuringState * TuringMashine::addEmtyState() {
+	TuringState * buff;
+	if (m_latest_state){
+		TuringStateVIterator it = m_latest_state->getIteratorV();
+		if (--it){
+			buff = (*it)->clone();
+			buff->getBand()->clear();
+			buff->setState(TURING_STATE_INIT);
+			return buff;
+		} else if (m_latest_state == 0){
+			return m_latest_state = new TuringState();
+		}
+	}
+	return 0;
+}
+
+TuringState * TuringMashine::cloneState(TURING_POINTER id) {
+	TuringState * buff;
+	for (auto it = getStates(); *it != 0; it++){
+		if (id-- == 0){
+			buff = (*it)->clone();
+			buff->setState(TURING_STATE_INIT);
+			return buff;
+		}
+	}
+	return 0;
 }
 
 TuringMashine::TuringMashine() {
