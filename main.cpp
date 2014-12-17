@@ -133,7 +133,7 @@ void readBand(){
 		if (!settings.b_quiet){
 			std::cout << "[BAND DATA]\t\t\t";
 		}
-		std::cin >> line;
+		std::getline(std::cin, line);
 	}
 
 	for (TURING_POINTER n = 0; n < (TURING_POINTER) line.length(); n++){
