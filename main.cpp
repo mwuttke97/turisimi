@@ -278,7 +278,7 @@ void simulate(){
 							continue;
 						}
 					} else if (str_cmd == "state"){
-						std::getline(ss, str_cmd_flags);
+						std::getline(ss, str_cmd_flags, ' ');
 						if (str_cmd_flags == "erase"){
 							// TODO
 							continue;
