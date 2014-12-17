@@ -109,7 +109,7 @@ TuringState::~TuringState() {
 			delete buffer;
 		}
 	}
-	// TODO kill children
+	erase(true);
 }
 
 TuringState* TuringState::clone() const{
