@@ -213,7 +213,9 @@ void writeStates(){
 }
 
 void erase_state(TURING_POINTER id){
-	mashine->eraseState(id);
+	if (!mashine->eraseState(id)){
+		std::cout << "Failed to erase statate " << id << "." << std::endl;
+	}
 }
 
 void simulate(){
