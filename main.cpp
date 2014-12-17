@@ -277,6 +277,7 @@ void edit_state(TURING_POINTER id){
 		if (line.empty()){
 			action = MOVE;
 			move = MOVE_RIGHT;
+			count = 1;
 		} else{
 			char buffer = ss_line.get();
 
@@ -306,6 +307,8 @@ void edit_state(TURING_POINTER id){
 			case MOVE_RIGHT:
 				action = MOVE;
 				move = buffer;
+				if (count == 0)
+					count = 1;
 				break;
 
 			case MOVE_STOP:
@@ -325,7 +328,7 @@ void edit_state(TURING_POINTER id){
 				else
 					move = MOVE_LEFT;
 			}
-			for (; count != -1; count--){
+			for (; count != 0; count--){
 				state->move(move);
 			}
 			break;
