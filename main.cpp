@@ -264,7 +264,10 @@ void edit_state(TURING_POINTER id){
 		TURING_POINTER count = 0;
 		TURING_BAND_DATA write = 0;
 
-		writeBand(*state);
+		if (!settings.b_quiet){
+			writeBand(*state);
+			std::cout << "[EDIT] ";
+		}
 
 		std::string line;
 		std::getline(std::cin, line);
@@ -334,6 +337,10 @@ void edit_state(TURING_POINTER id){
 		case NOOP:
 		default:
 			return;
+		}
+
+		if (!settings.b_quiet){
+			std::cout << std::endl;
 		}
 	}
 }
