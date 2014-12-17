@@ -175,7 +175,7 @@ void writeBand(const TuringState& state) {
 }
 
 void writeState(const TuringState & state){
-	std::cout << "State: " << turingStateString(state.getState()) << "; " << std::endl;
+	std::cout << "State: " << turingStateString(state.getState()) << "; [" << state.getID() << "] " <<  std::endl;
 
 	if (settings.n_trace_lenght != 0){
 		std::cout << "Trace: ";
