@@ -47,7 +47,12 @@ public:
 
 public:
 	bool verticeActive(TURING_VERTICE node_id);
+
+public:
 	bool eraseState(TURING_STATE id);
+
+private:
+	void eraseState(TuringStateHIterator & id);
 };
 
 #endif /* TURINGMASHINE_H_ */

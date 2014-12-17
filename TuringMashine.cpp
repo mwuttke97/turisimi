@@ -64,6 +64,10 @@ void TuringMashine::doStep() {
 	TuringStateHIterator stateIt;
 	TupleVector::iterator tupleIt;
 
+	if (m_latest_state == 0){
+		return;
+	}
+
 	switch (m_final_state){
 	case TURING_STATE_INIT:
 		m_final_state = TURING_STATE_NORMAL;
@@ -100,8 +104,12 @@ void TuringMashine::doStep() {
 		case TURING_STATE_OLD:
 		case TURING_STATE_REJECTED:
 		default:
-			(*stateIt)->erase(true);
-			delete *stateIt;
+			eraseState(stateIt);
+			if (m_latest_state){
+				if (m_latest_state->getState() == TURING_STATE_OLD){
+					m_latest_state->setState(TURING_STATE_REJECTED);
+				}
+			}
 			continue;
 		}
 		read = state->peek();
@@ -155,23 +163,27 @@ void TuringMashine::loopyStupi() {
 }
 
 bool TuringMashine::eraseState(TURING_STATE id) {
-	TuringState * buffer;
-	for (auto it = getStates(); *it != 0; it++){
+	for (TuringStateHIterator it = getStates(); *it != 0; it++){
 		if (--id == 0){
-			buffer = *it;
-			if (buffer){
-				buffer->erase();
-				if (buffer == m_latest_state){
-					m_latest_state = (TuringState*) --it;
-					delete buffer;
-					return true;
-				}
-				delete buffer;
-				return true;
-			}
+			eraseState(it);
+			return true;
 		}
 	}
 	return true;
+}
+
+void TuringMashine::eraseState(TuringStateHIterator & it){
+	TuringState * buffer = *it;
+	if (buffer){
+		if (buffer == m_latest_state){
+			m_latest_state = (TuringState*) --it;
+			if (m_latest_state == 0){
+				m_latest_state = (TuringState*) --buffer->getIteratorV();
+			}
+		}
+		buffer->erase(true);
+		delete buffer;
+	}
 }
 
 TuringMashine::TuringMashine() {

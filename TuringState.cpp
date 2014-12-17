@@ -109,6 +109,7 @@ TuringState::~TuringState() {
 			delete buffer;
 		}
 	}
+	// TODO kill children
 }
 
 TuringState* TuringState::clone() const{
@@ -140,12 +141,18 @@ void TuringState::erase(bool deleteChildren) {
 	if (m_brother_right){
 		m_brother_right->m_brother_left = m_brother_left;
 	}
-	if (deleteChildren){
-		auto it = getIteratorH();
+	if (deleteChildren && m_child_left){
+		auto it = m_child_left->getIteratorH();
 		for (; *it != 0; it++){
 			(*it)->erase(deleteChildren);
 			delete *it;
 		}
+	}
+	if (m_parent){
+		if (m_parent->m_child_left == this)
+			m_parent->m_child_left = 0;
+		if (m_parent->m_child_right == this)
+			m_parent->m_child_right = 0;
 	}
 	m_parent = 0;
 	m_child_left = 0;
