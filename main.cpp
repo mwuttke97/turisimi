@@ -214,14 +214,14 @@ void writeStates(){
 
 void erase_state(TURING_POINTER id){
 	if (!mashine->eraseState(id)){
-		std::cout << "Failed to erase state " << id << "." << std::endl;
+		std::cerr << "Failed to erase state " << id << "." << std::endl;
 	}
 }
 
 void add_state(){
 	TuringState * buff = mashine->addEmtyState();
 	if (buff == 0){
-		std::cout << "Failed to add state." << std::endl;
+		std::cerr << "Failed to add state." << std::endl;
 	} else{
 		writeState(*buff);
 	}
@@ -230,7 +230,7 @@ void add_state(){
 void clone_state(TURING_POINTER id){
 	TuringState * buff = mashine->cloneState(id);
 	if (buff == 0){
-		std::cout << "Failed to clone state " << id << "." << std::endl;
+		std::cerr << "Failed to clone state " << id << "." << std::endl;
 	} else{
 		writeState(*buff);
 	}
