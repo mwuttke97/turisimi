@@ -22,11 +22,11 @@ private:
 	TURING_POINTER m_pointer;
 	TURING_STATE m_state;
 	TURING_VERTICE m_vertice;
+	TuringState * m_brother_left;
 	TuringState * m_brother_right;
 	TuringState * m_parent;
 	TuringState * m_child_left;
 	TuringState * m_child_right;
-	TuringState * m_brother_left;
 	TURING_POINTER m_id;
 
 	bool m_delete_children;
