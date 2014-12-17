@@ -69,7 +69,7 @@ void TuringState::write(TURING_BAND_DATA data) {
 	m_band.write(m_pointer, data);
 }
 
-TuringState::TuringState() : m_band(), m_parent(0), m_child_left(0), m_child_right(0), m_brother_left(0), m_brother_right(0) {
+TuringState::TuringState() : m_band(), m_parent(0), m_child_left(0), m_child_right(0), m_brother_left(0), m_brother_right(0), m_id(0) {
 	this->m_state	= TURING_INIT_STATE;
 	this->m_pointer	= TURING_INIT_POINTER;
 	this->m_vertice = TURING_INIT_VERTICE;
@@ -85,11 +85,14 @@ TuringState::TuringState(TuringState& parentState) : m_band(), m_parent(&parentS
 	if (parentState.m_child_left == 0)
 		parentState.m_child_left = this;
 
+	m_id = 0;
+
 	m_brother_right = 0;
 	parentState.m_child_right = this;
 	if (m_brother_left){
 		if (m_brother_left->m_brother_right == 0){
 			m_brother_left->m_brother_right = this;
+			m_id = m_brother_left->m_id + 1;
 		}
 	}
 }
@@ -132,6 +135,10 @@ TuringStateHIterator TuringState::getIteratorH_right() const {
 
 TuringStateVIterator TuringState::getIteratorV() const {
 	return TuringStateVIterator((TuringState*) this);
+}
+
+TURING_POINTER TuringState::getID() {
+	return m_id;
 }
 
 void TuringState::erase(bool deleteChildren) {
