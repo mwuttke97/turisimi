@@ -53,6 +53,10 @@ public:
 
 private:
 	void eraseState(TuringStateHIterator & id);
+
+public:
+	TuringState * addEmtyState();
+	TuringState * cloneState(TURING_POINTER id);
 };
 
 #endif /* TURINGMASHINE_H_ */

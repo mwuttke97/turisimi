@@ -218,6 +218,24 @@ void erase_state(TURING_POINTER id){
 	}
 }
 
+void add_state(){
+	TuringState * buff = mashine->addEmtyState();
+	if (buff == 0){
+		std::cout << "Failed to add state." << std::endl;
+	} else{
+		writeState(*buff);
+	}
+}
+
+void clone_state(TURING_POINTER id){
+	TuringState * buff = mashine->cloneState(id);
+	if (buff == 0){
+		std::cout << "Failed to clone state " << id << "." << std::endl;
+	} else{
+		writeState(*buff);
+	}
+}
+
 void simulate(){
 	if (!settings.b_quiet){
 		std::cout << "Start simulation" << std::endl << std::endl;
@@ -295,7 +313,19 @@ void simulate(){
 							}
 							continue;
 						} else if (str_cmd_flags == "add"){
-							// TODO
+							if (!str_args.empty()){
+								help::invalid_input_simulate_break();
+								continue;
+							}
+							add_state();
+							continue;
+						} else if (str_cmd_flags == "clone"){
+							while (!ss.eof()){
+								ss >> s;
+								if (ss.peek() == ',')
+									ss.ignore();
+								clone_state(s);
+							}
 							continue;
 						} else if (str_cmd_flags == "edit"){
 							// TODO

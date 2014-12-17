@@ -186,6 +186,34 @@ void TuringMashine::eraseState(TuringStateHIterator & it){
 	}
 }
 
+TuringState * TuringMashine::addEmtyState() {
+	TuringState * buff;
+	if (m_latest_state){
+		TuringStateVIterator it = m_latest_state->getIteratorV();
+		if (--it){
+			buff = (*it)->clone();
+			buff->getBand()->clear();
+			buff->setState(TURING_STATE_INIT);
+			return buff;
+		} else if (m_latest_state == 0){
+			return m_latest_state = new TuringState();
+		}
+	}
+	return 0;
+}
+
+TuringState * TuringMashine::cloneState(TURING_POINTER id) {
+	TuringState * buff;
+	for (auto it = getStates(); *it != 0; it++){
+		if (id-- == 0){
+			buff = (*it)->clone();
+			buff->setState(TURING_STATE_INIT);
+			return buff;
+		}
+	}
+	return 0;
+}
+
 TuringMashine::TuringMashine() {
 	m_latest_state = new TuringState();
 	m_final_state = TURING_INIT_STATE;
