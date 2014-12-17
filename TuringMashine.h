@@ -49,7 +49,7 @@ public:
 	bool verticeActive(TURING_VERTICE node_id);
 
 public:
-	bool eraseState(TURING_STATE id);
+	bool eraseState(TURING_POINTER id);
 
 private:
 	void eraseState(TuringStateHIterator & id);

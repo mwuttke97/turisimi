@@ -212,7 +212,7 @@ void writeStates(){
 	std::cout << std::endl;
 }
 
-void erase_state(TURING_STATE id){
+void erase_state(TURING_POINTER id){
 	mashine->eraseState(id);
 }
 
@@ -282,7 +282,7 @@ void simulate(){
 							continue;
 						}
 					} else if (str_cmd == "state"){
-						TURING_STATE s;
+						TURING_POINTER s;
 						std::getline(ss, str_cmd_flags, ' ');
 						if (str_cmd_flags == "erase"){
 							while (!ss.eof()){

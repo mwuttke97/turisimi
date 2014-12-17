@@ -162,14 +162,14 @@ void TuringMashine::loopyStupi() {
 	}
 }
 
-bool TuringMashine::eraseState(TURING_STATE id) {
+bool TuringMashine::eraseState(TURING_POINTER id) {
 	for (TuringStateHIterator it = getStates(); *it != 0; it++){
 		if (--id == 0){
 			eraseState(it);
 			return true;
 		}
 	}
-	return true;
+	return false;
 }
 
 void TuringMashine::eraseState(TuringStateHIterator & it){
