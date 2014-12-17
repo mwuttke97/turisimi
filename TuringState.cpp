@@ -137,7 +137,7 @@ TuringStateVIterator TuringState::getIteratorV() const {
 	return TuringStateVIterator((TuringState*) this);
 }
 
-TURING_POINTER TuringState::getID() {
+TURING_POINTER TuringState::getID() const {
 	return m_id;
 }
 

@@ -22,12 +22,12 @@ private:
 	TURING_POINTER m_pointer;
 	TURING_STATE m_state;
 	TURING_VERTICE m_vertice;
-	TURING_POINTER m_id;
+	TuringState * m_brother_right;
 	TuringState * m_parent;
 	TuringState * m_child_left;
 	TuringState * m_child_right;
 	TuringState * m_brother_left;
-	TuringState * m_brother_right;
+	TURING_POINTER m_id;
 
 public:
 	TuringState();
@@ -57,7 +57,7 @@ public:
 	TuringStateHIterator getIteratorH() const;
 	TuringStateHIterator getIteratorH_right() const;
 	TuringStateVIterator getIteratorV() const;
-	TURING_POINTER getID();
+	TURING_POINTER getID() const;
 
 	void erase(bool deleteChildren = true);
 
