@@ -236,6 +236,108 @@ void clone_state(TURING_POINTER id){
 	}
 }
 
+void edit_state(TURING_POINTER id){
+	TURING_POINTER i;
+	TURING_MOVE_TYPE move;
+
+	auto it = mashine->getStates();
+
+	for (i = 0; i < id; i++){
+		if ((++it)->getID() == id){
+			break;
+		}
+	}
+	TuringState * state = *it;
+
+	if (i > id || *it == 0){
+		std::cout << "No such state: " << id << std::endl;
+		return;
+	}
+
+	enum{
+		NOOP,
+		MOVE,
+		WRITE,
+	} action;
+
+	for (;;) {
+		TURING_POINTER count = 0;
+		TURING_BAND_DATA write = 0;
+
+		writeBand(*state);
+
+		std::string line;
+		std::getline(std::cin, line);
+		std::stringstream ss_line(line);
+		action = NOOP;
+
+		if (line.empty()){
+			action = MOVE;
+			move = MOVE_RIGHT;
+		} else{
+			char buffer = ss_line.get();
+
+			switch (buffer){
+			case 'm':
+			case 'M':
+				ss_line >> count;
+				if (ss_line.peek() == ' ')
+					ss_line.ignore();
+				buffer = ss_line.get();
+				break;
+
+			case 'w':
+			case 'W':
+				action = WRITE;
+				if (ss_line.peek() == ' ')
+					ss_line.ignore();
+				ss_line >> write;
+				break;
+
+			default:
+				break;
+			}
+
+			switch (buffer){
+			case MOVE_LEFT:
+			case MOVE_RIGHT:
+				action = MOVE;
+				move = buffer;
+				break;
+
+			case MOVE_STOP:
+				action = NOOP;
+				break;
+
+			default:
+				break;
+			}
+		}
+		switch (action){
+		case MOVE:
+			if (count < 0){
+				count = -count;
+				if (move == MOVE_LEFT)
+					move = MOVE_RIGHT;
+				else
+					move = MOVE_LEFT;
+			}
+			for (; count != -1; count--){
+				state->move(move);
+			}
+			break;
+
+		case WRITE:
+			state->write(write);
+			break;
+
+		case NOOP:
+		default:
+			return;
+		}
+	}
+}
+
 void simulate(){
 	if (!settings.b_quiet){
 		std::cout << "Start simulation" << std::endl << std::endl;
@@ -328,7 +430,12 @@ void simulate(){
 							}
 							continue;
 						} else if (str_cmd_flags == "edit"){
-							// TODO
+							while (!ss.eof()){
+								ss >> s;
+								if (ss.peek() == ',')
+									ss.ignore();
+								edit_state(s);
+							}
 							continue;
 						}
 					}
