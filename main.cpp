@@ -268,15 +268,26 @@ void simulate(){
 						continue;
 					}
 					std::stringstream ss(str_input);
-					std::string str_cmd, str_args;
+					std::string str_cmd, str_cmd_flags, str_args;
 					std::getline(ss, str_cmd, ' ');
 					if (str_cmd == "toggle"){
-						str_cmd.clear();
-						std::getline(ss, str_cmd, ' ');
-						if (str_cmd == "bp" || str_cmd == "break_point"){
-							str_cmd.clear();
+						std::getline(ss, str_cmd_flags, ' ');
+						if (str_cmd_flags == "b" || str_cmd_flags == "bp" || str_cmd_flags == "break_point"){
 							std::getline(ss, str_args);
 							toggleBreakPoints(str_args);
+							continue;
+						}
+					} else if (str_cmd == "state"){
+						std::getline(ss, str_cmd_flags);
+						if (str_cmd_flags == "erase"){
+							// TODO
+							continue;
+						} else if (str_cmd_flags == "add"){
+							// TODO
+							continue;
+						} else if (str_cmd_flags == "edit"){
+							// TODO
+							continue;
 						}
 					}
 					help::invalid_input_simulate_break();
