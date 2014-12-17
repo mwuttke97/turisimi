@@ -29,6 +29,8 @@ private:
 	TuringState * m_brother_left;
 	TURING_POINTER m_id;
 
+	bool m_delete_children;
+
 public:
 	TuringState();
 	TuringState(TuringState & parentState);

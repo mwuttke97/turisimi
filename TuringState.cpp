@@ -73,6 +73,7 @@ TuringState::TuringState() : m_band(), m_parent(0), m_child_left(0), m_child_rig
 	this->m_state	= TURING_INIT_STATE;
 	this->m_pointer	= TURING_INIT_POINTER;
 	this->m_vertice = TURING_INIT_VERTICE;
+	this->m_delete_children = true;
 }
 
 TuringState::TuringState(TuringState& parentState) : m_band(), m_parent(&parentState), m_child_left(0), m_child_right(0) {
@@ -81,6 +82,7 @@ TuringState::TuringState(TuringState& parentState) : m_band(), m_parent(&parentS
 	m_state		= parentState.m_state;
 	m_vertice	= parentState.m_vertice;
 	m_brother_left = parentState.m_child_right;
+	m_delete_children = true;
 
 	if (parentState.m_child_left == 0)
 		parentState.m_child_left = this;
@@ -105,14 +107,22 @@ TuringState::~TuringState() {
 			TuringStateHIterator it = getIteratorH();
 			for (it++; *it != 0; it++){
 				(*it)->m_parent = 0;
+				(*it)->m_child_left = 0;
+				(*it)->m_child_right = 0;
 				delete *it;
 			}
+			m_parent->m_delete_children = false;
 			delete m_parent;
 		} else{
-			delete buffer;
+			if (buffer){
+				buffer->m_delete_children = false;
+				delete buffer;
+			}
 		}
 	}
-	erase(true);
+	if (m_delete_children){
+		erase(true);
+	}
 }
 
 TuringState* TuringState::clone() const{
@@ -142,6 +152,15 @@ TURING_POINTER TuringState::getID() const {
 }
 
 void TuringState::erase(bool deleteChildren) {
+	TuringState * parent_buffer = m_parent;
+	m_parent = 0;
+	if (parent_buffer){
+		if (parent_buffer->m_child_left == this)
+			parent_buffer->m_child_left = 0;
+		if (parent_buffer->m_child_right == this)
+			parent_buffer->m_child_right = 0;
+	}
+
 	if (m_brother_left){
 		m_brother_left->m_brother_right = m_brother_right;
 	}
@@ -154,12 +173,6 @@ void TuringState::erase(bool deleteChildren) {
 			(*it)->erase(deleteChildren);
 			delete *it;
 		}
-	}
-	if (m_parent){
-		if (m_parent->m_child_left == this)
-			m_parent->m_child_left = 0;
-		if (m_parent->m_child_right == this)
-			m_parent->m_child_right = 0;
 	}
 	m_parent = 0;
 	m_child_left = 0;
