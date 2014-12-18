@@ -32,7 +32,7 @@ public:
 
 public:
 	TuringStateHIterator getStates() const;
-	const TupleVector& getTuples() const;
+	TupleVector& getTuples() const;
 	TURING_STATE getFinalState() const;
 	bool reachedFinalState();
 

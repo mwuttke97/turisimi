@@ -10,7 +10,7 @@
 #include "TuringMashine.h"
 #include "TuringTypes.h"
 
-const TuringMashine::TupleVector& TuringMashine::getTuples() const {
+TuringMashine::TupleVector& TuringMashine::getTuples() const {
 	return m_tuples;
 }
 
