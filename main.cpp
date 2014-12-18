@@ -348,6 +348,15 @@ void edit_state(TURING_POINTER id){
 	}
 }
 
+void spule_back(TURING_POINTER count) {
+	TuringState * buffer = mashine->spuleBack(count);
+	if (buffer == 0){
+		std::cerr << "Failed to spule back." << std::endl;
+	} else if (!settings.b_quiet){
+		writeStates();
+	}
+}
+
 void simulate(){
 	if (!settings.b_quiet){
 		std::cout << "Start simulation" << std::endl << std::endl;
@@ -461,7 +470,21 @@ void simulate(){
 							}
 							continue;
 						}
+					} else if (str_cmd == "spule"){
+						TURING_POINTER arg;
+						if (ss.eof()){
+							arg = -1;
+						} else {
+							ss >> arg;
+							if (arg < 0){
+								arg = -arg;
+							}
+						}
+						std::cerr << arg << std::endl;
+						spule_back(arg);
+						continue;
 					}
+
 					help::invalid_input_simulate_break();
 				}
 			}
