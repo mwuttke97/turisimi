@@ -388,6 +388,8 @@ void simulate(){
 					}
 					std::getline(std::cin, str_input);
 					if (str_input.empty() || str_input == "s" || str_input == "step"){
+						settings.b_debug = true;
+						debug.b_step_by_step = true;
 						break;
 					}
 					if (str_input == "td" || str_input == "toggle debug"){
@@ -480,7 +482,6 @@ void simulate(){
 								arg = -arg;
 							}
 						}
-						std::cerr << arg << std::endl;
 						spule_back(arg);
 						continue;
 					}
