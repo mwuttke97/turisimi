@@ -220,11 +220,19 @@ TuringState * TuringMashine::spuleBack(TURING_POINTER count){
 		return buff;
 	}
 
-	auto it = m_latest_state->getIteratorH();
-	for (it--; *it != 0 && count != 0; it--, count--){
+	auto it = m_latest_state->getIteratorV();
+	for (it--; *it != 0; it--){
 		m_latest_state = *it;
+		if (--count == 0){
+			break;
+		}
 	}
 	m_latest_state->deleteChildren();
+	// TODO was init state?
+	if (m_latest_state->getState() == TURING_STATE_OLD){
+		m_latest_state->setState(TURING_STATE_NORMAL);
+		m_final_state = TURING_STATE_NORMAL;
+	}
 	return m_latest_state;
 }
 
