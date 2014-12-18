@@ -185,3 +185,7 @@ void TuringState::deleteChildren(){
 	m_child_left = 0;
 	m_child_right = 0;
 }
+
+bool TuringState::isRoot(){
+	return m_parent == 0;
+}
