@@ -251,7 +251,6 @@ void clone_state(TURING_POINTER id){
 
 void edit_state(TURING_POINTER id){
 	TURING_POINTER i;
-	TURING_MOVE_TYPE move;
 
 	auto it = mashine->getStates();
 
@@ -267,96 +266,74 @@ void edit_state(TURING_POINTER id){
 		return;
 	}
 
-	enum{
-		NOOP,
-		MOVE,
-		WRITE,
-	} action;
-
-	for (;;) {
-		TURING_POINTER count = 0;
-		TURING_BAND_DATA write = 0;
-
+	for (;;){
 		if (!settings.b_quiet){
 			writeBand(*state);
-			std::cout << "[EDIT] ";
+			std::cout << "[EDIT STATE] ";
 		}
 
-		std::string line;
-		std::getline(std::cin, line);
-		std::stringstream ss_line(line);
-		action = NOOP;
+		std::string str_line, str_cmd;
+		std::getline(std::cin, str_line);
+		std::stringstream ss_line(str_line);
+		std::getline(ss_line, str_cmd, ' ');
 
-		if (line.empty()){
-			action = MOVE;
-			move = MOVE_RIGHT;
-			count = 1;
-		} else{
-			char buffer = ss_line.get();
+		if (str_cmd == ""){
+			str_cmd += MOVE_RIGHT;
+		}
 
-			switch (buffer){
+		switch (str_cmd[0]){
 			case 'm':
 			case 'M':
-				ss_line >> count;
-				if (ss_line.peek() == ' ')
+			{
+				TURING_POINTER buffer0, buffer1;
+				buffer0 = state->getPointer();
+				ss_line >> buffer1;
+				if (ss_line.peek() == ' '){
 					ss_line.ignore();
-				buffer = ss_line.get();
+				}
+				if (!ss_line.eof()){
+					switch (ss_line.get()){
+						case MOVE_LEFT:
+							buffer1 = -buffer1;
+							break;
+
+						case MOVE_RIGHT:
+							buffer0 = +buffer1;
+							break;
+
+						default:
+							break;
+					}
+					buffer1 += buffer0;
+				}
+				state->setPointer(buffer1);
+				break;
+			}
+
+			case MOVE_LEFT:
+				state->move(MOVE_LEFT);
+				break;
+
+			case MOVE_RIGHT:
+				state->move(MOVE_RIGHT);
 				break;
 
 			case 'w':
 			case 'W':
-				action = WRITE;
-				if (ss_line.peek() == ' ')
-					ss_line.ignore();
-				ss_line >> write;
+			{
+				TURING_BAND_DATA buffer = ' ';
+				ss_line >> buffer;
+				state->write(buffer);
 				break;
+			}
+
+			case 's':
+			case 'S':
+				return;
 
 			default:
+				// TODO invalid cmd
 				break;
-			}
-
-			switch (buffer){
-			case MOVE_LEFT:
-			case MOVE_RIGHT:
-				action = MOVE;
-				move = buffer;
-				if (count == 0)
-					count = 1;
-				break;
-
-			case MOVE_STOP:
-				action = NOOP;
-				break;
-
-			default:
-				break;
-			}
-		}
-		switch (action){
-		case MOVE:
-			if (count < 0){
-				count = -count;
-				if (move == MOVE_LEFT)
-					move = MOVE_RIGHT;
-				else
-					move = MOVE_LEFT;
-			}
-			for (; count != 0; count--){
-				state->move(move);
-			}
-			break;
-
-		case WRITE:
-			state->write(write);
-			break;
-
-		case NOOP:
-		default:
-			return;
-		}
-
-		if (!settings.b_quiet){
-			std::cout << std::endl;
 		}
 	}
 }
