@@ -38,6 +38,13 @@ TURING_BAND_DATA TuringTuple::getWrite() const {
 void TuringTuple::setWrite(TURING_BAND_DATA write) {
 	m_write = write;
 }
+TuringTuple::TuringTuple(){
+	m_to_id = 0;	
+	m_from_id = 0;
+	m_read = 0;
+	m_write = 0;
+	m_move = MOVE_STOP;
+}
 
 TuringTuple::TuringTuple(TURING_POINTER to_id, TURING_POINTER from_id, TURING_BAND_DATA read, TURING_BAND_DATA write, TURING_MOVE_TYPE move){
 	m_to_id		= to_id;
