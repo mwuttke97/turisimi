@@ -16,7 +16,6 @@ Some things to be done
 
 > That I'll **not** forget it:
 
- * Integrate libreadline and maybe ncurles.
  * Export / save Turing Mashine / band state(s)
  * Implement some more [Examples](Examples).
  * Implent some outputs in`help.cpp`.
