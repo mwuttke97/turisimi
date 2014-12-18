@@ -77,15 +77,28 @@ void setInitPointer(const char * arg){
 	ss >> settings.p_first_band_data_pointer;
 }
 
+void read_tuple(std::istream & s, TuringTuple & tuple){
+	TURING_POINTER from_id;
+	TURING_BAND_DATA read;
+	TURING_BAND_DATA write;
+	TURING_POINTER to_id;
+	TURING_MOVE_TYPE move;
+	s
+	>> from_id
+	>> read
+	>> write
+	>> to_id
+	>> move;
+
+	tuple.setFromId(from_id);
+	tuple.setRead(read);
+	tuple.setWrite(write);
+	tuple.setToId(to_id);
+	tuple.setMove(move);
+}
+
 void readTM(){
 	TURING_POINTER n_edges, n_accepting_vertices, node_id;
-	struct{
-		TURING_POINTER from_id;
-		TURING_BAND_DATA read;
-		TURING_BAND_DATA write;
-		TURING_POINTER to_id;
-		TURING_MOVE_TYPE move;
-	} tuple;
 
 	if (!settings.b_quiet)
 		std::cout << "Number of accepting nodes:\t";
@@ -111,13 +124,13 @@ void readTM(){
 		if (!settings.b_quiet){
 			std::cout << "[EDGE 5-TUPLE]\t\t\t";
 		}
-		memset(&tuple, 0, sizeof(tuple));
-		std::cin >> tuple.from_id >> tuple.read >> tuple.write >> tuple.to_id >> tuple.move;
+		TuringTuple * tuple = new TuringTuple();
+		read_tuple(std::cin, *tuple);
+		mashine->addTuple(tuple);
 		if (std::cin.fail()){
 			std::cin.clear();
 			std::cin.ignore();
 		}
-		mashine->addTuple(new TuringTuple(tuple.to_id, tuple.from_id, tuple.read, tuple.write, (TURING_MOVE_TYPE) tuple.move));
 	}
 	if (!settings.b_quiet){
 		std::cout << "OK." << std::endl;
@@ -357,6 +370,124 @@ void spule_back(TURING_POINTER count) {
 	}
 }
 
+void writeTuple(std::ostream & ss, TuringTuple & tuple){
+	ss
+	<< tuple.getFromId() << " "
+	<< tuple.getRead() << " "
+	<< tuple.getWrite() << " "
+	<< tuple.getToId() << " "
+	<< tuple.getMove();
+}
+
+void edit_tuples(){
+	auto tuples = mashine->getTuples();
+	TURING_POINTER edit_id, buffer;
+	TuringTuple * edit;
+
+	edit_id = 0;
+
+	for (;;){
+		auto it = tuples.begin();
+		for (buffer = 0; it != tuples.end(); it++, buffer++){
+			if (edit_id == buffer){
+				edit = *it;
+				break;
+			}
+		}
+		if (it == tuples.end()){
+			edit_id = buffer - 1;
+			edit = *--it;
+		}
+		if (!settings.b_quiet){
+			auto it = tuples.begin();
+			for (buffer = 0; it != tuples.end(); it++, buffer++){
+				writeTuple(std::cout, **it);
+				std::cout << "\t[" << buffer << "]";
+				if (edit_id == buffer){
+					std::cout << "\t<--";
+				}
+				std::cout << std::endl;
+			}
+			std::cout << std::endl << "[TUPLES] ";
+		}
+
+		std::string str_line, str_cmd;
+		std::getline(std::cin, str_line);
+		std::stringstream ss_line(str_line);
+		std::getline(ss_line, str_cmd, ' ');
+
+		if (str_cmd == ""){
+			str_cmd += MOVE_RIGHT;
+		}
+
+		switch (str_cmd[0]){
+			case 'm':
+			case 'M':
+				buffer = edit_id;
+				ss_line >> edit_id;
+				if (ss_line.peek() == ' '){
+					ss_line.ignore();
+				}
+				if (!ss_line.eof()){
+					switch (ss_line.get()){
+						case MOVE_LEFT:
+							edit_id = -edit_id;
+							break;
+
+						case MOVE_RIGHT:
+							edit_id = +edit_id;
+							break;
+
+						default:
+							break;
+					}
+					edit_id += buffer;
+				}
+				break;
+
+			case MOVE_LEFT:
+				edit_id--;
+				break;
+
+			case MOVE_RIGHT:
+				edit_id++;
+				break;
+
+			case 'w':
+			case 'W':
+				if (edit)
+					read_tuple(ss_line, *edit);
+				break;
+
+			case 'a':
+			case 'A':
+				tuples.push_back(new TuringTuple());
+				edit_id = buffer;
+				break;
+
+			case 'e':
+			case 'E':
+				if (!edit)
+					break;
+
+				it = std::find(tuples.begin(), tuples.end(), edit);
+				if (it != tuples.end()){
+					tuples.erase(it);
+				}
+				delete edit;
+				break;
+
+			case 's':
+			case 'S':
+				return;
+
+			default:
+				// TODO invalid cmd
+				break;
+		}
+	}
+}
+
 void simulate(){
 	if (!settings.b_quiet){
 		std::cout << "Start simulation" << std::endl << std::endl;
@@ -483,6 +614,9 @@ void simulate(){
 							}
 						}
 						spule_back(arg);
+						continue;
+					} else if (str_cmd == "tuples"){
+						edit_tuples();
 						continue;
 					}
 
