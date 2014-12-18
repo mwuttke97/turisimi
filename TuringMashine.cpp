@@ -10,7 +10,7 @@
 #include "TuringMashine.h"
 #include "TuringTypes.h"
 
-const TuringMashine::TupleVector& TuringMashine::getTuples() const {
+TuringMashine::TupleVector& TuringMashine::getTuples() {
 	return m_tuples;
 }
 
@@ -228,10 +228,14 @@ TuringState * TuringMashine::spuleBack(TURING_POINTER count){
 		}
 	}
 	m_latest_state->deleteChildren();
-	// TODO was init state?
 	if (m_latest_state->getState() == TURING_STATE_OLD){
-		m_latest_state->setState(TURING_STATE_NORMAL);
-		m_final_state = TURING_STATE_NORMAL;
+		if (m_latest_state->isRoot()){
+			  m_latest_state->setState(TURING_STATE_INIT);
+				m_final_state = TURING_STATE_INIT;
+			} else{
+			  m_latest_state->setState(TURING_STATE_NORMAL);
+				m_final_state = TURING_STATE_NORMAL;
+			}
 	}
 	return m_latest_state;
 }

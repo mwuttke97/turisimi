@@ -63,6 +63,7 @@ public:
 
 	void erase(bool b_deleteChildren = true);
 	void deleteChildren();
+	bool isRoot();
 
 	friend class TuringStateHIterator;
 	friend class TuringStateVIterator;

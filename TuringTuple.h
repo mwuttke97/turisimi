@@ -19,6 +19,8 @@ private:
 	TURING_MOVE_TYPE m_move;
 
 public:
+	TuringTuple();
+
 	TuringTuple(TURING_POINTER to_id, TURING_POINTER from_id, TURING_BAND_DATA read, TURING_BAND_DATA write, TURING_MOVE_TYPE move);
 
 public:
