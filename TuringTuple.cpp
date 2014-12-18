@@ -41,8 +41,8 @@ void TuringTuple::setWrite(TURING_BAND_DATA write) {
 TuringTuple::TuringTuple(){
 	m_to_id = 0;	
 	m_from_id = 0;
-	m_read = 0;
-	m_write = 0;
+	m_read = ' ';
+	m_write = ' ';
 	m_move = MOVE_STOP;
 }
 
