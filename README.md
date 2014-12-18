@@ -16,6 +16,7 @@ Some things to be done
 
 > That I'll **not** forget it:
 
+ * Export / save Turing Mashine / band state(s)
  * Implement some more [Examples](Examples).
  * Implent some outputs in`help.cpp`.
  * Maybe (ASCII-) graphical Turing Mashine output. (But I think this verry is not trival at all.)
