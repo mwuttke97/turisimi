@@ -634,6 +634,8 @@ void simulate(){
 						std::ofstream of_tm(str_cmd_flags);
 						if (of_tm.fail()){
 							std::cerr << "An error occured while opening file \"" << str_cmd_flags << "\"." << std::endl;
+							of_tm.close();
+							continue;
 						}
 						writeTM(of_tm);
 						if (of_tm.fail()){
