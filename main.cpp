@@ -408,6 +408,8 @@ void edit_tuples(){
 			str_cmd += MOVE_RIGHT;
 		}
 
+		buffer = 0;
+
 		switch (str_cmd[0]){
 			case 'm':
 			case 'M':
@@ -449,8 +451,18 @@ void edit_tuples(){
 
 			case 'a':
 			case 'A':
-				tuples.push_back(new TuringTuple());
-				edit_id = buffer;
+				buffer = 1;
+
+			case 'i':
+			case 'I':
+				edit = new TuringTuple();
+				if (!ss_line.eof()){
+					read_tuple(ss_line, *edit);
+				}
+				if (buffer){
+					edit_id++;
+				}
+				tuples.insert(tuples.begin() + edit_id, edit);
 				break;
 
 			case 'e':
