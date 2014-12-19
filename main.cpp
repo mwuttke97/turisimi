@@ -48,6 +48,12 @@ static struct{
 
 TuringMashine * mashine;
 
+void quit(int status = 0){
+	if (mashine)
+		delete mashine;
+	exit(status);
+}
+
 void toggleBreakPoints(std::stringstream & ss) {
 	TURING_POINTER buffer;
 	while (ss >> buffer) {
@@ -331,6 +337,11 @@ void edit_state(TURING_POINTER id){
 			case 'S':
 				return;
 
+			case 'q':
+			case 'Q':
+				quit(1);
+				break;
+
 			default:
 				// TODO invalid cmd
 				break;
@@ -457,6 +468,11 @@ void edit_tuples(){
 			case 's':
 			case 'S':
 				return;
+
+			case 'q':
+			case 'Q':
+				quit(1);
+				break;
 
 			default:
 				// TODO invalid cmd
