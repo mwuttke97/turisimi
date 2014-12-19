@@ -12,6 +12,7 @@ Usage
 
 **turisimi** is a console application. It has therefore no graphical interface (GUI) but instead a command line interface (CLI).
 User input is organized into two types:
+
 1. The command line arguments ("args") that you give the application when you start it. (Explained first)
 2. Prompts while executing. (Explained later)
 
@@ -29,10 +30,10 @@ List of command arguments ("args"):
 * `-b` or `--band`; followed by DATA: The application will load DATA into the band data.
 * `-i` or `--in`; followed by FILE: The application will read the Turing Mashine *and* the band data from FILE.
 * `-p` or `--band-init`; followed by POINTER: Sets the "first" band data pointer. Default is 0.
-* `-din` or `--debug-in`; followed by FILEIN and `-dout` or `--debug_out`; followed by FILEOUT: specify the input and output files while simulation. If FILEIN is set all inputs are read from FILEIN. If FILEOUT is set all outputs will be directed int the file FILEOUTPUT.
+* `-din` or `--debug-in`; followed by FILEIN and `-dout` or `--debug_out`; followed by FILEOUT: specify the input and output files while simulation. If FILEIN is set all inputs are read from FILEIN. If FILEOUT is set all outputs will be directed into the file FILEOUT.
 * `-sbs` or `--step-by-step`: activates the usefull **Step-by-Step** mode. Read more [here](sbs.md).
 * `-c` or `--continue`: Let the programm continue simulating until a break point is reached.
-* `-bp` or `--break-points`; followed by BREAKPOINTS: Collon (`,`) separated list of **break point** - IDs. When a state thats ID is in BREAKPOINTS is activated, the simulation goes intto *SBS* mode.
+* `-bp` or `--break-points`; followed by BREAKPOINTS: Collon (`,`) separated list of the break points state IDs. When a state thats ID is in BREAKPOINTS is activated, the simulation goes into *SBS* mode.
 
 Command Promts
 ###
