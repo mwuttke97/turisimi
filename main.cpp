@@ -405,7 +405,7 @@ void edit_tuples(){
 		std::getline(ss_line, str_cmd, ' ');
 
 		if (str_cmd == ""){
-			str_cmd += MOVE_RIGHT;
+			str_cmd += MOVE_DOWN;
 		}
 
 		buffer = 0;
@@ -420,11 +420,11 @@ void edit_tuples(){
 				}
 				if (!ss_line.eof()){
 					switch (ss_line.get()){
-						case MOVE_LEFT:
+						case MOVE_UP:
 							edit_id = -edit_id;
 							break;
 
-						case MOVE_RIGHT:
+						case MOVE_DOWN:
 							edit_id = +edit_id;
 							break;
 
@@ -435,11 +435,11 @@ void edit_tuples(){
 				}
 				break;
 
-			case MOVE_LEFT:
+			case MOVE_UP:
 				edit_id--;
 				break;
 
-			case MOVE_RIGHT:
+			case MOVE_DOWN:
 				edit_id++;
 				break;
 
@@ -733,7 +733,7 @@ int main(int argc, const char *argv[]){
 					current_arg = ARG_FILE_TM_IN;
 					break;
 				}
-				if (!strcmp("-i", arg) || !strcmp("-in", arg) || !strcmp("--input", arg)){
+				if (!strcmp("-i", arg) || !strcmp("--in", arg) || !strcmp("--input", arg)){
 					settings.b_one_input_file = true;
 					current_arg = ARG_FILE_INPUT;
 					break;
@@ -775,7 +775,7 @@ int main(int argc, const char *argv[]){
 					current_arg = ARG_NEW_ARG;
 					break;
 				}
-				if (!strcmp("-bp", arg) || !strcmp("--brake-points", arg)){
+				if (!strcmp("-bp", arg) || !strcmp("--break-points", arg)){
 					settings.b_debug	= true;
 					current_arg = ARG_DEBUG_BREAK_POINTS;
 					break;
