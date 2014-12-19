@@ -12,7 +12,7 @@ It's like stepping -- that's how it works:
 Valid commands are:
 
 * EMPTY STRING [ENTER]: Process `r`.
-* `m POINTER`: Moves pointer to POINTER
+* `m POINTER`: Moves pointer to POINTER.
 * `m COUNT [l|r]`: Moves pointer `COUNT` times left or right.
 * `[l|r]`: Moves cursor left or right.
 * **`w CHAR`**: Writes `CHAR` to the pointer position.
