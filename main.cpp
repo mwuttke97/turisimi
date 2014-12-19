@@ -368,7 +368,7 @@ void writeTuple(std::ostream & ss, TuringTuple & tuple){
 }
 
 void edit_tuples(){
-	auto tuples = mashine->getTuples();
+	auto & tuples = mashine->getTuples();
 	TURING_POINTER edit_id, buffer;
 	TuringTuple * edit;
 
