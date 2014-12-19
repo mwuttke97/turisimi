@@ -9,7 +9,7 @@ First it reads the IDs of the accepting states and some 5-tuples standing for th
 The second input file contains the band data. The first data pointer can be changed with the parameter `-p` / `--band-init`. By default it is `0`.
 The third task is the simulation itself. If the flag `-sbs` aka. `--step-by-step` is set, the execution interupts for each step. It prints the bands data for each state. The user can interact to the Turing Mashine or let the simulation continue. For example it is possible to spule back the states or to edit current states.
 
-For more informationsbread the [docu/manual.md](manual).
+For more informationsbread the [manual](docu/manual.md).
 
 Some things to be done
 ===
