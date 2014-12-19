@@ -195,11 +195,11 @@ TuringState * TuringMashine::addEmtyState() {
 			buff->getBand()->clear();
 			buff->setState(TURING_STATE_INIT);
 			return buff;
-		} else if (m_latest_state == 0){
-			return m_latest_state = new TuringState();
 		}
 	}
-	return 0;
+	if (m_latest_state == 0){
+		return m_latest_state = new TuringState();
+	}
 }
 
 TuringState * TuringMashine::cloneState(TURING_POINTER id) {
