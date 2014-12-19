@@ -30,11 +30,11 @@ List of command arguments ("args"):
 * `-i` or `--in`; followed by FILE: The application will read the Turing Mashine *and* the band data from FILE.
 * `-p` or `--band-init`; followed by POINTER: Sets the "first" band data pointer. Default is 0.
 * `-din` or `--debug-in`; followed by FILEIN and `-dout` or `--debug_out`; followed by FILEOUT: specify the input and output files while simulation. If FILEIN is set all inputs are read from FILEIN. If FILEOUT is set all outputs will be directed int the file FILEOUTPUT.
-* `-sbs` or `--step-by-step`: activates the usefull **Step-by-Step** mode. Read more [sbs.md](here).
+* `-sbs` or `--step-by-step`: activates the usefull **Step-by-Step** mode. Read more [here](sbs.md).
 * `-c` or `--continue`: Let the programm continue simulating until a break point is reached.
 * `-bp` or `--break-points`; followed by BREAKPOINTS: Collon (`,`) separated list of **break point** - IDs. When a state thats ID is in BREAKPOINTS is activated, the simulation goes intto *SBS* mode.
 
 Command Promts
 ###
 
-If SBS is activated the **debug_prompt** will be activated. Read more [sbs.md](here).
+If SBS is activated the **debug_prompt** will be activated. Read more [here](sbs.md).
