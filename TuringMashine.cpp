@@ -32,10 +32,6 @@ void TuringMashine::addBandData(TURING_POINTER index, TURING_BAND_DATA value) {
 	}
 }
 
-void TuringMashine::addAcceptingState(TURING_POINTER node_id) {
-	m_accepting_states.push_back(node_id);
-}
-
 TuringStateHIterator TuringMashine::getStates() const {
 	if (m_latest_state){
 		return m_latest_state->getIteratorH();
@@ -212,6 +208,14 @@ TuringState * TuringMashine::cloneState(TURING_POINTER id) {
 		}
 	}
 	return 0;
+}
+
+void TuringMashine::addAcceptingState(TURING_POINTER node_id) {
+	m_accepting_states.push_back(node_id);
+}
+
+std::vector<TURING_POINTER> & TuringMashine::getAcceptingStates() {
+	return m_accepting_states;
 }
 
 TuringState * TuringMashine::spuleBack(TURING_POINTER count){
