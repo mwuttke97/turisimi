@@ -40,6 +40,7 @@ public:
 	void addTuple(const TuringTuple * tuple);
 	void addBandData(TURING_POINTER index, TURING_BAND_DATA value);
 	void addAcceptingState(TURING_POINTER node_id);
+	std::vector<TURING_POINTER> & getAcceptingStates();
 
 public:
 	void doStep();
