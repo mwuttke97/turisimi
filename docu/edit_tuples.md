@@ -15,7 +15,7 @@ Valid commands are:
 
 * EMPTY STRING [ENTER]: Process `r`.
 * `m TUPLE_ID`: Moves cursor to line `TUPLE_ID`.
-* `m COUNT [l|r]`: Moves cursor `COUNT` times up or down where `l` stands for up and `r` for down.
-* `[l|r]`: Moves cursor up or down.
+* `m COUNT [u|d]`: Moves cursor `COUNT` times up or down. 
+* `[u|d]`: Moves cursor up or down.
 * **`w TUPLE`**: Writes 5-Tuple TUPLE to cursor position.
 * `s`: Quits `edit_tuples()`. **TIPP**: After `s` you can type `export` in `dbg_cmd` prompt to save changes.

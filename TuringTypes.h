@@ -35,6 +35,8 @@ typedef char TURING_MOVE_TYPE, TURING_STATE;
 enum{
 	MOVE_RIGHT = 'r',
 	MOVE_LEFT = 'l',
+	MOVE_UP = 'u',
+	MOVE_DOWN = 'd',
 	MOVE_STOP = 's',
 };
 
