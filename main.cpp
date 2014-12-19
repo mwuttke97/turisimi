@@ -481,6 +481,24 @@ void edit_tuples(){
 	}
 }
 
+void writeTM(std::ostream & os){
+	auto states = mashine->getAcceptingStates();
+	auto tuples = mashine->getTuples();
+
+	os << states.size() << std::endl;
+	for (auto it = states.begin(); it != states.end(); it++){
+		os << *it <<  std::endl;
+	}
+
+	os << tuples.size() << std::endl;
+	for (auto it = tuples.begin(); it != tuples.end(); it++){
+		if (*it){
+			writeTuple(os, **it);
+			os << std::endl;
+		}
+	}
+}
+
 void simulate(){
 	if (!settings.b_quiet){
 		std::cout << "Start simulation" << std::endl << std::endl;
@@ -610,6 +628,18 @@ void simulate(){
 						continue;
 					} else if (str_cmd == "tuples"){
 						edit_tuples();
+						continue;
+					} else if (str_cmd == "export"){
+						std::getline(ss, str_cmd_flags, ' ');
+						std::ofstream of_tm(str_cmd_flags);
+						if (of_tm.fail()){
+							std::cerr << "An error occured while opening file \"" << str_cmd_flags << "\"." << std::endl;
+						}
+						writeTM(of_tm);
+						if (of_tm.fail()){
+							std::cerr << "An error occured while writing to file \"" << str_cmd << "\"." << std::endl;
+						}
+						of_tm.close();
 						continue;
 					}
 
