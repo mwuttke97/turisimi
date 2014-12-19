@@ -631,7 +631,15 @@ void simulate(){
 						continue;
 					} else if (str_cmd == "export"){
 						std::getline(ss, str_cmd_flags, ' ');
-						std::ofstream of_tm(str_cmd_flags);
+						if (str_cmd_flags == ""){
+							if (strcmp(settings.str_tm_in, "-") != 0){
+								str_cmd_flags += settings.str_tm_in;
+							} else{
+								std::cerr << "Path is eamty!" << std::endl;
+								continue;
+							}
+						}
+						std::ofstream of_tm(str_cmd_flags, std::ios::out);
 						if (of_tm.fail()){
 							std::cerr << "An error occured while opening file \"" << str_cmd_flags << "\"." << std::endl;
 							of_tm.close();
@@ -852,6 +860,7 @@ int main(int argc, const char *argv[]){
 	if (settings.b_one_input_file){
 		settings.b_quiet = true;
 	} else{
+		in.close();
 		std::cin.rdbuf(cinbuff);
 		if (strcmp("-", settings.str_band_file_in) != 0){
 			// redirect std::cin to input file if `settings.str_band_file_in` is not equal to "-"
