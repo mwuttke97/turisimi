@@ -5,7 +5,7 @@ User manual
 General
 ####
 
-**turisimi** is a Turing Mashine simulator. You should know about Turing Mashines, if you want to use this application. On the Internet there are useful informations.
+**turisimi** is a Turing Machine simulator. You should know about Turing Machines, if you want to use this application. On the Internet there are useful informations.
 
 Usage
 ####
@@ -25,10 +25,10 @@ Command line arguments
 List of command arguments ("args"):
 
 * `-q` or `--qiet`: The application does not print prompt strings or extra informations for the *user*. Only relevant informations are to be displayed.
-* `-tm` or `--tm_in`; followed by FILE: The application will read FILE instead of asking the user to input the Turing Mashine.
+* `-tm` or `--tm_in`; followed by FILE: The application will read FILE instead of asking the user to input the Turing Machine.
 * `-bin` or `--band_in`; followed by FILE: The application will read FILE instead of asking the user for the band data.
 * `-b` or `--band`; followed by DATA: The application will load DATA into the band data.
-* `-i` or `--in`; followed by FILE: The application will read the Turing Mashine *and* the band data from FILE.
+* `-i` or `--in`; followed by FILE: The application will read the Turing Machine *and* the band data from FILE.
 * `-p` or `--band-init`; followed by POINTER: Sets the "first" band data pointer. Default is 0.
 * `-din` or `--debug-in`; followed by FILEIN and `-dout` or `--debug_out`; followed by FILEOUT: specify the input and output files while simulation. If FILEIN is set all inputs are read from FILEIN. If FILEOUT is set all outputs will be directed into the file FILEOUT.
 * `-sbs` or `--step-by-step`: activates the usefull **Step-by-Step** mode. Read more [here](sbs.md).

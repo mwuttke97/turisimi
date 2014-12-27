@@ -2,7 +2,7 @@ How to use `edit_tuples()`?
 ===========================
 
 With `edit_tuples()`, obvously, you can edit tuples.
-You edit the Turing Mashine and aim to debug / edit a Turing Mashine while executing. You don't have to use an text editor, through this is kinda *special* (simple) text editor.
+You edit the Turing Machine and aim to debug / edit a Turing Machine while executing. You don't have to use an text editor, through this is kinda *special* (simple) text editor.
 
 It's like stepping -- that's how it works:
 
