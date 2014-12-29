@@ -2,7 +2,7 @@
  * TuringMachine.cpp
  *
  *  Created on: 10.12.2014
- *      Author: maxi
+ *      Author: Maximilian Wuttke (mwuttke97@gmail.com)
  */
 
 #include <algorithm>

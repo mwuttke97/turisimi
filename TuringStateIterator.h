@@ -2,7 +2,7 @@
  * TuringStateIterator.h
  *
  *  Created on: 16.12.2014
- *      Author: maxi
+ *      Author: Maximilian Wuttke (mwuttke97@gmail.com)
  */
 
 #ifndef TURINGSTATEITERATOR_H_

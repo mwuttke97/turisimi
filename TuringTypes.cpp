@@ -2,7 +2,7 @@
  * TuringTypes.cpp
  *
  *  Created on: 11.12.2014
- *      Author: maxi
+ *      Author: Maximilian Wuttke (mwuttke97@gmail.com)
  */
 
 #include "TuringTypes.h"
