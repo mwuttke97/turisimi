@@ -21,4 +21,4 @@ LICENSE
 #######
 
 The code is licenced under a [MIT license](LICENSE).
-Feel free to freely distribute the programm, but you HAVE to mention the origin authore who is me, mwuttke97@gmail.com.
+Feel free to contribute!
