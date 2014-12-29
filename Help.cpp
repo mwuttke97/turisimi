@@ -10,7 +10,7 @@
 #include "Help.h"
 
 void help::info() {
-	std::cout << "Turing mashine simulator" << std::endl;
+	std::cout << "Turing machine simulator" << std::endl;
 	std::cout << "========================" << std::endl;
 }
 

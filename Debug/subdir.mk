@@ -6,7 +6,7 @@
 CPP_SRCS += \
 ../Help.cpp \
 ../TuringBand.cpp \
-../TuringMashine.cpp \
+../TuringMachine.cpp \
 ../TuringState.cpp \
 ../TuringStateIterator.cpp \
 ../TuringTuple.cpp \
@@ -16,7 +16,7 @@ CPP_SRCS += \
 OBJS += \
 ./Help.o \
 ./TuringBand.o \
-./TuringMashine.o \
+./TuringMachine.o \
 ./TuringState.o \
 ./TuringStateIterator.o \
 ./TuringTuple.o \
@@ -26,7 +26,7 @@ OBJS += \
 CPP_DEPS += \
 ./Help.d \
 ./TuringBand.d \
-./TuringMashine.d \
+./TuringMachine.d \
 ./TuringState.d \
 ./TuringStateIterator.d \
 ./TuringTuple.d \

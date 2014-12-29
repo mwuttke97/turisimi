@@ -20,7 +20,7 @@
 #include "TuringTuple.h"
 #include "TuringState.h"
 #include "TuringStateIterator.h"
-#include "TuringMashine.h"
+#include "TuringMachine.h"
 #include "Help.h"
 
 static struct{
@@ -46,11 +46,11 @@ static struct{
 	std::vector<TURING_POINTER> v_break_points;
 } debug;
 
-TuringMashine * mashine;
+TuringMachine * machine;
 
 void quit(int status = 0){
-	if (mashine)
-		delete mashine;
+	if (machine)
+		delete machine;
 	exit(status);
 }
 
@@ -115,7 +115,7 @@ void readTM(){
 			std::cout << "[Accepting NODE ID]\t\t";
 		}
 		std::cin >> node_id;
-		mashine->addAcceptingState(node_id);
+		machine->addAcceptingState(node_id);
 	}
 
 	if (!settings.b_quiet)
@@ -132,7 +132,7 @@ void readTM(){
 		}
 		TuringTuple * tuple = new TuringTuple();
 		read_tuple(std::cin, *tuple);
-		mashine->addTuple(tuple);
+		machine->addTuple(tuple);
 		if (std::cin.fail()){
 			std::cin.clear();
 			std::cin.ignore();
@@ -156,7 +156,7 @@ void readBand(){
 	}
 
 	for (TURING_POINTER n = 0; n < (TURING_POINTER) line.length(); n++){
-		mashine->addBandData(n + settings.p_first_band_data_pointer, line[n]);
+		machine->addBandData(n + settings.p_first_band_data_pointer, line[n]);
 	}
 
 	if (!settings.b_quiet){
@@ -222,9 +222,9 @@ void writeState(const TuringState & state){
 }
 
 void writeRegisters(){
-	std::cout << "Simulation state: " << turingStateString(mashine->getFinalState()) << std::endl;
+	std::cout << "Simulation state: " << turingStateString(machine->getFinalState()) << std::endl;
 
-	for (auto states = mashine->getStates(); *states != 0; states++){
+	for (auto states = machine->getStates(); *states != 0; states++){
 		assert(*states);
 		writeState(**states);
 	}
@@ -232,13 +232,13 @@ void writeRegisters(){
 }
 
 void erase_state(TURING_POINTER id){
-	if (!mashine->eraseState(id)){
+	if (!machine->eraseState(id)){
 		std::cerr << "Failed to erase state " << id << "." << std::endl;
 	}
 }
 
 void add_state(){
-	TuringState * buff = mashine->addEmtyState();
+	TuringState * buff = machine->addEmtyState();
 	if (buff == 0){
 		std::cerr << "Failed to add state." << std::endl;
 	} else{
@@ -247,7 +247,7 @@ void add_state(){
 }
 
 void clone_state(TURING_POINTER id){
-	TuringState * buff = mashine->cloneState(id);
+	TuringState * buff = machine->cloneState(id);
 	if (buff == 0){
 		std::cerr << "Failed to clone state " << id << "." << std::endl;
 	} else{
@@ -258,7 +258,7 @@ void clone_state(TURING_POINTER id){
 void edit_state(TURING_POINTER id){
 	TURING_POINTER i;
 
-	auto it = mashine->getStates();
+	auto it = machine->getStates();
 
 	for (i = 0; i < id; i++){
 		if ((++it)->getID() == id){
@@ -350,7 +350,7 @@ void edit_state(TURING_POINTER id){
 }
 
 void spule_back(TURING_POINTER count) {
-	TuringState * buffer = mashine->spuleBack(count);
+	TuringState * buffer = machine->spuleBack(count);
 	if (buffer == 0){
 		std::cerr << "Failed to spule back." << std::endl;
 	} else if (!settings.b_quiet){
@@ -368,7 +368,7 @@ void writeTuple(std::ostream & ss, TuringTuple & tuple){
 }
 
 void edit_tuples(){
-	auto & tuples = mashine->getTuples();
+	auto & tuples = machine->getTuples();
 	TURING_POINTER edit_id, buffer;
 	TuringTuple * edit;
 
@@ -495,8 +495,8 @@ void edit_tuples(){
 }
 
 void writeTM(std::ostream & os){
-	auto states = mashine->getAcceptingStates();
-	auto tuples = mashine->getTuples();
+	auto states = machine->getAcceptingStates();
+	auto tuples = machine->getTuples();
 
 	os << states.size() << std::endl;
 	for (auto it = states.begin(); it != states.end(); it++){
@@ -519,15 +519,15 @@ void simulate(){
 
 	for (;;){
 		bool b_interupt = false;
-		if (mashine->reachedFinalState()){
-			b_interupt = *mashine->getStates() == 0 || !settings.b_continue_if_accepted;
+		if (machine->reachedFinalState()){
+			b_interupt = *machine->getStates() == 0 || !settings.b_continue_if_accepted;
 		}
 		if (settings.b_debug || b_interupt){
 			bool b_break = false;
 			b_break |= debug.b_step_by_step || b_interupt;
 			if (!b_break){
 				for (auto it = debug.v_break_points.begin(); it != debug.v_break_points.end(); it++){
-					if (mashine->verticeActive(*it)){
+					if (machine->verticeActive(*it)){
 						b_break |= true;
 						break;
 					}
@@ -672,7 +672,7 @@ void simulate(){
 		} else if (settings.b_verbose){
 			writeRegisters();
 		}
-		mashine->doStep();
+		machine->doStep();
 	}
 }
 
@@ -681,7 +681,7 @@ int main(int argc, const char *argv[]){
 	const char * prgm = (argv > 0 && argv[0]) ? argv[0] : "turisimi";
 
 	// create TM
-	mashine = new TuringMashine();
+	machine = new TuringMachine();
 
 	// standard options
 	settings.b_quiet = false;
@@ -915,7 +915,7 @@ int main(int argc, const char *argv[]){
 	if (out.is_open())
 		out.close();
 
-	delete mashine;
+	delete machine;
 
 	return 1;
 }

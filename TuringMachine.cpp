@@ -1,5 +1,5 @@
 /*
- * TuringMashine.cpp
+ * TuringMachine.cpp
  *
  *  Created on: 10.12.2014
  *      Author: maxi
@@ -7,39 +7,39 @@
 
 #include <algorithm>
 #include <assert.h>
-#include "TuringMashine.h"
+#include "TuringMachine.h"
 #include "TuringTypes.h"
 
-TuringMashine::TupleVector& TuringMashine::getTuples() {
+TuringMachine::TupleVector& TuringMachine::getTuples() {
 	return m_tuples;
 }
 
-TURING_STATE TuringMashine::getFinalState() const {
+TURING_STATE TuringMachine::getFinalState() const {
 	return m_final_state;
 }
 
-bool TuringMashine::reachedFinalState() {
+bool TuringMachine::reachedFinalState() {
 	return m_final_state == TURING_STATE_ACCEPTED;
 }
 
-void TuringMashine::addTuple(const TuringTuple * tuple) {
+void TuringMachine::addTuple(const TuringTuple * tuple) {
 	m_tuples.push_back(const_cast<TuringTuple*> (tuple));
 }
 
-void TuringMashine::addBandData(TURING_POINTER index, TURING_BAND_DATA value) {
+void TuringMachine::addBandData(TURING_POINTER index, TURING_BAND_DATA value) {
 	for (auto it = m_latest_state->getIteratorH(); *it != 0; it++){
 		(*it)->getBand()->write(index, value);
 	}
 }
 
-TuringStateHIterator TuringMashine::getStates() const {
+TuringStateHIterator TuringMachine::getStates() const {
 	if (m_latest_state){
 		return m_latest_state->getIteratorH();
 	}
 	return TuringStateHIterator();
 }
 
-bool TuringMashine::verticeActive(TURING_VERTICE node_id) {
+bool TuringMachine::verticeActive(TURING_VERTICE node_id) {
 	for (auto it = m_latest_state->getIteratorH(); *it != 0; it++){
 		if ((*it)->getVertice() == node_id){
 			switch((*it)->getState()){
@@ -55,7 +55,7 @@ bool TuringMashine::verticeActive(TURING_VERTICE node_id) {
 	return false;
 }
 
-void TuringMashine::doStep() {
+void TuringMachine::doStep() {
 	TURING_BAND_DATA read;
 	TuringStateHIterator stateIt;
 	TupleVector::iterator tupleIt;
@@ -152,13 +152,13 @@ void TuringMashine::doStep() {
 	}
 }
 
-void TuringMashine::loopyStupi() {
+void TuringMachine::loopyStupi() {
 	while(m_final_state == TURING_STATE_NORMAL){
 		doStep();
 	}
 }
 
-bool TuringMashine::eraseState(TURING_POINTER id) {
+bool TuringMachine::eraseState(TURING_POINTER id) {
 	for (TuringStateHIterator it = getStates(); *it != 0; it++){
 		if (id-- == 0){
 			eraseState(it);
@@ -168,7 +168,7 @@ bool TuringMashine::eraseState(TURING_POINTER id) {
 	return false;
 }
 
-void TuringMashine::eraseState(TuringStateHIterator & it){
+void TuringMachine::eraseState(TuringStateHIterator & it){
 	TuringState * buffer = *it;
 	if (buffer){
 		if (buffer == m_latest_state){
@@ -182,7 +182,7 @@ void TuringMashine::eraseState(TuringStateHIterator & it){
 	}
 }
 
-TuringState * TuringMashine::addEmtyState() {
+TuringState * TuringMachine::addEmtyState() {
 	TuringState * buff;
 	if (m_latest_state){
 		TuringStateVIterator it = m_latest_state->getIteratorV();
@@ -196,9 +196,10 @@ TuringState * TuringMashine::addEmtyState() {
 	if (m_latest_state == 0){
 		return m_latest_state = new TuringState();
 	}
+	return buff;
 }
 
-TuringState * TuringMashine::cloneState(TURING_POINTER id) {
+TuringState * TuringMachine::cloneState(TURING_POINTER id) {
 	TuringState * buff;
 	for (auto it = getStates(); *it != 0; it++){
 		if (id-- == 0){
@@ -210,15 +211,15 @@ TuringState * TuringMashine::cloneState(TURING_POINTER id) {
 	return 0;
 }
 
-void TuringMashine::addAcceptingState(TURING_POINTER node_id) {
+void TuringMachine::addAcceptingState(TURING_POINTER node_id) {
 	m_accepting_states.push_back(node_id);
 }
 
-std::vector<TURING_POINTER> & TuringMashine::getAcceptingStates() {
+std::vector<TURING_POINTER> & TuringMachine::getAcceptingStates() {
 	return m_accepting_states;
 }
 
-TuringState * TuringMashine::spuleBack(TURING_POINTER count){
+TuringState * TuringMachine::spuleBack(TURING_POINTER count){
 	TuringState * buff = m_latest_state;
 	if (buff == 0){
 		return buff;
@@ -244,12 +245,12 @@ TuringState * TuringMashine::spuleBack(TURING_POINTER count){
 	return m_latest_state;
 }
 
-TuringMashine::TuringMashine() {
+TuringMachine::TuringMachine() {
 	m_latest_state = new TuringState();
 	m_final_state = TURING_INIT_STATE;
 }
 
-TuringMashine::~TuringMashine() {
+TuringMachine::~TuringMachine() {
 	// Delete only the "latest" state.
 	// The rest will be deleted, through.
 	if (m_latest_state)

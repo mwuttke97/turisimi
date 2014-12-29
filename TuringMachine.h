@@ -1,12 +1,12 @@
 /*
- * TuringMashine.h
+ * TuringMachine.h
  *
  *  Created on: 10.12.2014
  *      Author: maxi
  */
 
-#ifndef TURINGMASHINE_H_
-#define TURINGMASHINE_H_
+#ifndef TURINGMACHINE_H_
+#define TURINGMACHINE_H_
 
 #include <list>
 #include <queue>
@@ -15,7 +15,7 @@
 #include "TuringState.h"
 #include "TuringStateIterator.h"
 
-class TuringMashine{
+class TuringMachine{
 public:
 	typedef std::vector<TuringTuple*> TupleVector;
 	typedef std::vector<TURING_POINTER> TuringPointerVector;
@@ -27,8 +27,8 @@ private:
 	TURING_STATE m_final_state;
 
 public:
-	TuringMashine();
-	~TuringMashine();
+	TuringMachine();
+	~TuringMachine();
 
 public:
 	TuringStateHIterator getStates() const;
@@ -61,4 +61,4 @@ public:
 	TuringState * spuleBack(TURING_POINTER count);
 };
 
-#endif /* TURINGMASHINE_H_ */
+#endif /* TURINGMACHINE_H_ */
