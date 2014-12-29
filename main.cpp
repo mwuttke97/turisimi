@@ -221,7 +221,7 @@ void writeState(const TuringState & state){
 	std::cout << std::endl;
 }
 
-void writeStates(){
+void writeRegisters(){
 	std::cout << "Simulation state: " << turingStateString(mashine->getFinalState()) << std::endl;
 
 	for (auto states = mashine->getStates(); *states != 0; states++){
@@ -354,7 +354,7 @@ void spule_back(TURING_POINTER count) {
 	if (buffer == 0){
 		std::cerr << "Failed to spule back." << std::endl;
 	} else if (!settings.b_quiet){
-		writeStates();
+		writeRegisters();
 	}
 }
 
@@ -452,6 +452,7 @@ void edit_tuples(){
 			case 'a':
 			case 'A':
 				buffer = 1;
+				/* no break */
 
 			case 'i':
 			case 'I':
@@ -534,7 +535,7 @@ void simulate(){
 			}
 
 			if (b_break){
-				writeStates();
+				writeRegisters();
 				for (;;){
 					std::string str_input;
 					if (!settings.b_quiet){
@@ -669,7 +670,7 @@ void simulate(){
 				}
 			}
 		} else if (settings.b_verbose){
-			writeStates();
+			writeRegisters();
 		}
 		mashine->doStep();
 	}
