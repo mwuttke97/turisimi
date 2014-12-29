@@ -10,8 +10,7 @@
 #include "Help.h"
 
 void help::info() {
-	std::cout << "Turing machine simulator" << std::endl;
-	std::cout << "========================" << std::endl;
+	std::cout << "Turing Machine Simulator" << std::endl;
 }
 
 void help::invalid_input_simulate_break(){
